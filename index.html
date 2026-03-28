@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Japan · May 2026</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛩️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -218,6 +219,22 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 @media(max-width:480px){.multi-day-grid{grid-template-columns:1fr}}
 
 /* ── DAILY TAB ───────────────────────────────────────────────────────────── */
+.daily-content-grid{
+  display:grid;
+  grid-template-columns:1fr 360px;
+  gap:20px;
+  align-items:start;
+}
+.daily-map-panel{
+  position:sticky;top:20px;
+  height:520px;border-radius:12px;
+  border:1px solid var(--border);overflow:hidden;
+}
+#daily-map{width:100%;height:100%}
+@media(max-width:860px){
+  .daily-content-grid{grid-template-columns:1fr}
+  .daily-map-panel{position:static;height:300px;order:-1}
+}
 .day-select-bar{
   display:flex;gap:4px;flex-wrap:nowrap;overflow-x:auto;
   margin-bottom:1.5rem;padding-bottom:2px;scrollbar-width:none;
@@ -850,11 +867,15 @@ function setHourlyView(view){
   document.querySelector(`.hv-btn[data-view="${view}"]`).classList.add('active');
   const single = document.getElementById('hourly-panels');
   const multi  = document.getElementById('multi-day-container');
+  const mapPanel = document.getElementById('daily-map-panel');
   if(view==='single'){
     single.style.display=''; multi.style.display='none';
+    if(mapPanel) mapPanel.style.display='';
     selDay(_currentDayIdx);
+    setTimeout(()=>{ if(_dailyMap) _dailyMap.invalidateSize(); }, 50);
   } else {
     single.style.display='none'; multi.style.display='';
+    if(mapPanel) mapPanel.style.display='none';
     renderMultiDay(_currentDayIdx);
   }
 }
@@ -961,7 +982,12 @@ function renderHourly(days, schedule){
     </div>
   </div>
   <div class="day-select-bar" id="day-select-bar">${bar}</div>
-  <div id="hourly-panels">${panels}</div>
+  <div class="daily-content-grid" id="daily-content-grid">
+    <div id="hourly-panels">${panels}</div>
+    <div class="daily-map-panel" id="daily-map-panel">
+      <div id="daily-map"></div>
+    </div>
+  </div>
   <div id="multi-day-container" style="display:none"></div>`;
 }
 
@@ -1014,6 +1040,82 @@ function renderTips(tips){
 }
 
 let _scheduleForMap = [];
+
+// ── DAILY TAB MAP ─────────────────────────────────────────────────────────────
+let _dailyMap     = null;
+let _dailyMarkers = null;
+
+function initDailyMap(){
+  if(typeof L === 'undefined') return;
+  const el = document.getElementById('daily-map');
+  if(!el) return;
+  if(_dailyMap){ _dailyMap.remove(); _dailyMap = null; }
+
+  _dailyMap = L.map('daily-map',{zoomControl:true,scrollWheelZoom:false})
+    .setView([35.7,139.75],12);
+
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{
+    attribution:'Tiles © <a href="https://www.esri.com/">Esri</a>',
+    maxZoom:19
+  }).addTo(_dailyMap);
+
+  _dailyMarkers = L.layerGroup().addTo(_dailyMap);
+}
+
+function updateDailyMap(dayIdx){
+  if(!_dailyMap || !_days[dayIdx]) return;
+  _dailyMarkers.clearLayers();
+
+  const d     = _days[dayIdx];
+  const slots = _byDate[d.date]||[];
+  const bounds = [];
+  let   seq   = 0;
+
+  slots.forEach(s=>{
+    if(!s.map_query) return;
+    const coord = COORDS[s.map_query];
+    if(!coord) return;
+    const [lat,lng,city] = coord;
+    seq++;
+    const color = CITY_COLORS[city]||'#BF3934';
+
+    // Numbered teardrop pin
+    const icon = L.divIcon({
+      className:'',
+      html:`<div style="width:26px;height:34px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))">
+        <svg viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg" width="26" height="34">
+          <path d="M13 0C5.82 0 0 5.82 0 13c0 9.1 13 21 13 21s13-11.9 13-21C26 5.82 20.18 0 13 0z" fill="${color}"/>
+          <circle cx="13" cy="13" r="7" fill="rgba(255,255,255,0.9)"/>
+          <text x="13" y="17" text-anchor="middle" font-size="9" font-weight="700" font-family="Inter,sans-serif" fill="${color}">${seq}</text>
+        </svg>
+      </div>`,
+      iconSize:[26,34], iconAnchor:[13,34], popupAnchor:[0,-36]
+    });
+
+    const marker = L.marker([lat,lng],{icon});
+    const imgSrc = ACTIVITY_IMAGES[s.map_query]||'';
+    const imgHtml = imgSrc
+      ? `<img src="${imgSrc}" style="width:180px;height:90px;object-fit:cover;border-radius:6px;margin-bottom:8px;display:block" onerror="this.style.display='none'">`
+      : '';
+    const dot = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${color};margin-right:5px;vertical-align:middle"></span>`;
+    marker.bindPopup(
+      `${imgHtml}`+
+      `<div style="font-size:11px;color:#888;margin-bottom:2px">${s.time||''}</div>`+
+      `<div style="font-size:13px;font-weight:600;margin-bottom:4px;line-height:1.3">${dot}${s.name}</div>`+
+      `<div style="font-size:12px;color:#555;margin-bottom:6px;line-height:1.4">${s.detail||''}</div>`+
+      `<a href="${gm(s.map_query)}" target="_blank" style="font-size:12px;color:#1a73e8;text-decoration:none;font-weight:500">Open in Maps →</a>`,
+      {maxWidth:200}
+    );
+    _dailyMarkers.addLayer(marker);
+    bounds.push([lat,lng]);
+  });
+
+  if(bounds.length===1){
+    _dailyMap.setView(bounds[0],15);
+  } else if(bounds.length>1){
+    _dailyMap.fitBounds(bounds,{padding:[32,32],maxZoom:15});
+  }
+}
 
 
 // ── RENDER BUDGET ─────────────────────────────────────────────────────────────
@@ -1105,6 +1207,7 @@ function switchTab(id, el){
   el.classList.add('active');
   document.getElementById('panel-'+id).classList.add('active');
   if(id==='summary' && _leafletMap) setTimeout(()=>_leafletMap.invalidateSize(), 50);
+  if(id==='hourly'  && _dailyMap)   setTimeout(()=>_dailyMap.invalidateSize(),   50);
 }
 function openDay(i){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -1125,6 +1228,7 @@ function selDay(i){
     document.querySelectorAll('.hourly-panel').forEach(p=>p.classList.remove('active'));
     const hp = document.getElementById('hp-'+i);
     if(hp) hp.classList.add('active');
+    updateDailyMap(i);
   } else {
     renderMultiDay(i);
   }
@@ -1164,6 +1268,8 @@ async function loadAll(){
   document.getElementById('panel-summary').innerHTML = renderCalendar(days) + renderSummaryMap();
   initLeafletMap();
   document.getElementById('panel-hourly').innerHTML  = renderHourly(days, schedule);
+  initDailyMap();
+  updateDailyMap(0);
   document.getElementById('panel-hotels').innerHTML  = renderHotels(hotels);
   document.getElementById('panel-tips').innerHTML    = renderTips(tips);
   document.getElementById('panel-budget').innerHTML  = renderBudget(budget);
