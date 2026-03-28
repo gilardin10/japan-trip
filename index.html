@@ -504,31 +504,71 @@ const LS_KEY = 'jp2026_sheet_id';
 
 // ── ACTIVITY THUMBNAIL LOOKUP (map_query → image URL) ────────────────────────
 const ACTIVITY_IMAGES = {
-  'Senso-ji Temple Asakusa Tokyo':       'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/24701-Asakusa%2C_Tokyo.jpg/480px-24701-Asakusa%2C_Tokyo.jpg',
-  'Sumida Park Asakusa playground Tokyo':'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Sumida_Park_sakura_2010.jpg/480px-Sumida_Park_sakura_2010.jpg',
-  'Tokyo Skytree':                        'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Tokyo_Sky_Tree_2012.JPG/400px-Tokyo_Sky_Tree_2012.JPG',
-  'Shinobazu Pond Ueno Tokyo':           'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Shinobazunoike_2009.jpg/480px-Shinobazunoike_2009.jpg',
-  'Ameyoko Market Ueno Tokyo':           'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Ueno_Ameyoko_Tokyo_Japan.jpg/480px-Ueno_Ameyoko_Tokyo_Japan.jpg',
-  'Meiji Shrine Harajuku Tokyo':         'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Meiji_Jingu_entrance.jpg/400px-Meiji_Jingu_entrance.jpg',
-  'Yoyogi Park playground Tokyo':        'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Yoyogi_Park_area.jpg/480px-Yoyogi_Park_area.jpg',
-  'Omotesando Tokyo':                    'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Omotesando_Hills.jpg/480px-Omotesando_Hills.jpg',
-  'Shibuya Crossing Tokyo':              'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Shibuya_scramble.jpg/480px-Shibuya_scramble.jpg',
-  'Hakone Ropeway Owakudani':            'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Owakudani_from_Hakone_Ropeway.JPG/480px-Owakudani_from_Hakone_Ropeway.JPG',
-  'Lake Ashi Pier Hakone':              'https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Lake_Ashi_and_Mt._Fuji.jpg/480px-Lake_Ashi_and_Mt._Fuji.jpg',
-  'Ryokan Ubuya Lake Kawaguchi':        'https://ak-d.tripcdn.com/images/0225a12000k3lnjtbB22F_R_960_660_R5_D.jpg',
-  'Arashiyama Bamboo Grove Kyoto':      'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Bamboo_groves_in_Sagano%2C_Arashiyama.jpg/400px-Bamboo_groves_in_Sagano%2C_Arashiyama.jpg',
+  // ── Tokyo: Asakusa ──────────────────────────────────────────────────────────
+  'MIMARU Tokyo Asakusa Station':            'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/24701-Asakusa%2C_Tokyo.jpg/480px-24701-Asakusa%2C_Tokyo.jpg',
+  'Sumida River Tokyo':                      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Sumida_River_from_Kiyosu_Bridge.jpg/480px-Sumida_River_from_Kiyosu_Bridge.jpg',
+  'Senso-ji Temple Asakusa Tokyo':           'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/24701-Asakusa%2C_Tokyo.jpg/480px-24701-Asakusa%2C_Tokyo.jpg',
+  'Sumida Park Asakusa playground Tokyo':    'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Sumida_Park_sakura_2010.jpg/480px-Sumida_Park_sakura_2010.jpg',
+  // ── Tokyo: Ueno / Skytree ───────────────────────────────────────────────────
+  'Tokyo Skytree':                           'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Tokyo_Sky_Tree_2012.JPG/400px-Tokyo_Sky_Tree_2012.JPG',
+  'Kura Sushi Asakusa Tokyo':                'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Kura_Sushi_conveyor_belt.jpg/480px-Kura_Sushi_conveyor_belt.jpg',
+  'Shinobazu Pond Ueno Tokyo':               'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Shinobazunoike_2009.jpg/480px-Shinobazunoike_2009.jpg',
+  'Ameyoko Market Ueno Tokyo':               'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Ueno_Ameyoko_Tokyo_Japan.jpg/480px-Ueno_Ameyoko_Tokyo_Japan.jpg',
+  'Yanaka Tokyo':                            'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Yanaka_ginza.JPG/480px-Yanaka_ginza.JPG',
+  // ── Tokyo: Harajuku / Shibuya ───────────────────────────────────────────────
+  'Meiji Shrine Harajuku Tokyo':             'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Meiji_Jingu_entrance.jpg/400px-Meiji_Jingu_entrance.jpg',
+  'Yoyogi Park playground Tokyo':            'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Yoyogi_Park_area.jpg/480px-Yoyogi_Park_area.jpg',
+  'Omotesando Tokyo':                        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Omotesando_Hills.jpg/480px-Omotesando_Hills.jpg',
+  'Shibuya Crossing Tokyo':                  'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Shibuya_scramble.jpg/480px-Shibuya_scramble.jpg',
+  'Shibuya Hikarie food floor Tokyo':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Hikarie_2012.jpg/480px-Hikarie_2012.jpg',
+  // ── Hakone ──────────────────────────────────────────────────────────────────
+  'Hakone-Yumoto Station':                   'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Hakoneyumoto_station_20090907.jpg/480px-Hakoneyumoto_station_20090907.jpg',
+  'Ryokan Ubuya Lake Kawaguchi':             'https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Lake_Ashi_and_Mt._Fuji.jpg/480px-Lake_Ashi_and_Mt._Fuji.jpg',
+  'Hakone Ropeway Owakudani':                'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Owakudani_from_Hakone_Ropeway.JPG/480px-Owakudani_from_Hakone_Ropeway.JPG',
+  'Lake Ashi Pier Hakone':                   'https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Lake_Ashi_and_Mt._Fuji.jpg/480px-Lake_Ashi_and_Mt._Fuji.jpg',
+  'Hakone-machi Pier restaurants':           'https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Lake_Ashi_and_Mt._Fuji.jpg/480px-Lake_Ashi_and_Mt._Fuji.jpg',
+  // ── Kyoto: Arrival & Gion ───────────────────────────────────────────────────
+  'Kyoto Station':                           'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kyoto_station_south_gate.jpg/480px-Kyoto_station_south_gate.jpg',
+  'Hotel Shizuru Kyoto Kawaramachi':         'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Kamo_River_Kyoto.jpg/480px-Kamo_River_Kyoto.jpg',
+  'Gion Shirakawa Canal Kyoto':              'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Shirakawa_Canal%2C_Kyoto.jpg/480px-Shirakawa_Canal%2C_Kyoto.jpg',
+  // ── Kyoto: Arashiyama ───────────────────────────────────────────────────────
+  'Arashiyama Bamboo Grove Kyoto':           'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Bamboo_groves_in_Sagano%2C_Arashiyama.jpg/400px-Bamboo_groves_in_Sagano%2C_Arashiyama.jpg',
   'Tenryu-ji Temple Garden Arashiyama Kyoto':'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Tenryu-ji_Sogen_Pond.jpg/480px-Tenryu-ji_Sogen_Pond.jpg',
   'Sagano Scenic Railway Arashiyama Kyoto':  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Sagano_Scenic_Railway.JPG/480px-Sagano_Scenic_Railway.JPG',
-  'Gion Shirakawa Canal Kyoto':         'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Shirakawa_Canal%2C_Kyoto.jpg/480px-Shirakawa_Canal%2C_Kyoto.jpg',
-  'Fushimi Inari Taisha Shrine Kyoto':  'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Fushimi_Inari_Taisha_torii.jpg/400px-Fushimi_Inari_Taisha_torii.jpg',
-  'Tofuku-ji Temple Kyoto':             'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Tofukuji-hojo.jpg/480px-Tofukuji-hojo.jpg',
-  'Nijo Castle Kyoto':                  'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Nijojo_Castle_Kyoto.JPG/480px-Nijojo_Castle_Kyoto.JPG',
-  'Nishiki Market Kyoto':               'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Nishiki_Market_Kyoto.jpg/480px-Nishiki_Market_Kyoto.jpg',
-  'Nara Deer Park':                     'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Nara_deer.jpg/480px-Nara_deer.jpg',
-  'Todai-ji Temple Nara':               'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Todaiji0511.JPG/480px-Todaiji0511.JPG',
-  'Kasuga Grand Shrine path Nara':      'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Kasugataisha05s3200.jpg/480px-Kasugataisha05s3200.jpg',
-  'teamLab Biovortex Kyoto Station':    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/TeamLab_Borderless_2019_%2848671533276%29.jpg/480px-TeamLab_Borderless_2019_%2848671533276%29.jpg',
-  'Kura Sushi Asakusa Tokyo':           'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Kura_Sushi_conveyor_belt.jpg/480px-Kura_Sushi_conveyor_belt.jpg',
+  'Arashiyama Yoshimura Restaurant Kyoto':   'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Bamboo_groves_in_Sagano%2C_Arashiyama.jpg/400px-Bamboo_groves_in_Sagano%2C_Arashiyama.jpg',
+  // ── Kyoto: Fushimi & South ──────────────────────────────────────────────────
+  'Fushimi Inari Taisha Shrine Kyoto':       'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Fushimi_Inari_Taisha_torii.jpg/400px-Fushimi_Inari_Taisha_torii.jpg',
+  'Tofuku-ji Temple Kyoto':                  'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Tofukuji-hojo.jpg/480px-Tofukuji-hojo.jpg',
+  'Nijo Castle Kyoto':                       'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Nijojo_Castle_Kyoto.JPG/480px-Nijojo_Castle_Kyoto.JPG',
+  'Nishiki Market Kyoto':                    'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Nishiki_Market_Kyoto.jpg/480px-Nishiki_Market_Kyoto.jpg',
+  // ── Kyoto: Railway Museum & Umekoji ─────────────────────────────────────────
+  'Kyoto Railway Museum':                    'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Kyoto_Railway_Museum_201606.jpg/480px-Kyoto_Railway_Museum_201606.jpg',
+  'Umekoji Park Kyoto playground':           'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Umekoji_Park_Kyoto.jpg/480px-Umekoji_Park_Kyoto.jpg',
+  // ── Kyoto: teamLab ──────────────────────────────────────────────────────────
+  'teamLab Biovortex Kyoto Station':         'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/TeamLab_Borderless_2019_%2848671533276%29.jpg/480px-TeamLab_Borderless_2019_%2848671533276%29.jpg',
+  'Porta Dining Kyoto Station':              'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kyoto_station_south_gate.jpg/480px-Kyoto_station_south_gate.jpg',
+  // ── Nara ────────────────────────────────────────────────────────────────────
+  'Nara Deer Park':                          'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Nara_deer.jpg/480px-Nara_deer.jpg',
+  'Todai-ji Temple Nara':                    'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Todaiji0511.JPG/480px-Todaiji0511.JPG',
+  'Kasuga Grand Shrine path Nara':           'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Kasugataisha05s3200.jpg/480px-Kasugataisha05s3200.jpg',
+  // ── Osaka ───────────────────────────────────────────────────────────────────
+  'Osaka Aquarium Kaiyukan':                 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Osaka_Aquarium_Kaiyukan01s3200.jpg/480px-Osaka_Aquarium_Kaiyukan01s3200.jpg',
+  'Dotonbori Osaka':                         'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Dotonbori_Osaka_2007.jpg/480px-Dotonbori_Osaka_2007.jpg',
+  'Tombori River Cruise Dotonbori Osaka':    'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Dotonbori_Osaka_2007.jpg/480px-Dotonbori_Osaka_2007.jpg',
+  'Shinsaibashi Shopping Street Osaka':      'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Shinsaibashi-suji_Shopping_Street.jpg/480px-Shinsaibashi-suji_Shopping_Street.jpg',
+  // ── Tokyo: Ginza / Hibiya return ────────────────────────────────────────────
+  'Kyoto Station Shinkansen':                'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kyoto_station_south_gate.jpg/480px-Kyoto_station_south_gate.jpg',
+  'Hibiya Park Tokyo':                       'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Hibiya_Park_Tokyo.jpg/480px-Hibiya_Park_Tokyo.jpg',
+  'Ginza Six food floor Tokyo':              'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Ginza_Crossing.jpg/480px-Ginza_Crossing.jpg',
+  'teamLab Borderless Azabudai Hills Tokyo': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/TeamLab_Borderless_2019_%2848671533276%29.jpg/480px-TeamLab_Borderless_2019_%2848671533276%29.jpg',
+  'Azabudai Hills Tokyo':                    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/TeamLab_Borderless_2019_%2848671533276%29.jpg/480px-TeamLab_Borderless_2019_%2848671533276%29.jpg',
+  'Toyosu Park Tokyo waterfront':            'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Toyosu_Market_20181011.jpg/480px-Toyosu_Market_20181011.jpg',
+  'Itoya Ginza Tokyo':                       'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Ginza_Crossing.jpg/480px-Ginza_Crossing.jpg',
+  'Ginza restaurants Tokyo':                 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Ginza_Crossing.jpg/480px-Ginza_Crossing.jpg',
+  // ── Departure: Haneda ───────────────────────────────────────────────────────
+  'Haneda International Airport Tokyo':      'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/HND_Terminal1.jpg/480px-HND_Terminal1.jpg',
+  'Haneda Airport Departure Terminal':       'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/HND_Terminal1.jpg/480px-HND_Terminal1.jpg',
+  'Haneda Airport observation deck':         'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/HND_Terminal1.jpg/480px-HND_Terminal1.jpg',
 };
 
 // ── MAP: city colors & zoom centres ──────────────────────────────────────────
