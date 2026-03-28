@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japan · May 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1a1a;--muted:#666;--hint:#999;
+  --surface:#fff;--raised:#f5f4f1;--border:#e8e6e0;--border-m:#d0cdc4;
+  --r:12px;--rm:8px;
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --blue-bg:#E6F1FB;--blue-txt:#185FA5;--blue-bd:#B5D4F4;
+  --green-bg:#EAF3DE;--green-txt:#3B6D11;--green-bd:#C0DD97;
+  --amber-bg:#FAEEDA;--amber-txt:#854F0B;--amber-bd:#FAC775;
+  --pink-bg:#FBEAF0;--pink-txt:#993556;--pink-bd:#F4C0D1;
+  --red-bg:#FCEBEB;--red-txt:#A32D2D;--red-bd:#F7C1C1;
+  --purple-bg:#EEEDFE;--purple-txt:#534AB7;--purple-bd:#CECBF6;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --ink:#f0ede6;--muted:#a09a8e;--hint:#6b6560;
+    --surface:#1c1b18;--raised:#252420;--border:#333028;--border-m:#4a4740;
+    --blue-bg:#0c2a4a;--blue-txt:#85B7EB;
+    --green-bg:#1a2e0a;--green-txt:#97C459;
+    --amber-bg:#2e1e04;--amber-txt:#EF9F27;
+    --pink-bg:#2a0f1a;--pink-txt:#ED93B1;
+    --red-bg:#2a0808;--red-txt:#F09595;
+    --purple-bg:#1a1840;--purple-txt:#AFA9EC;
+  }
+}
+body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-height:100vh}
+.page{max-width:680px;margin:0 auto;padding:0 16px 3rem}
+.top-bar{padding:1.5rem 0 1rem;border-bottom:0.5px solid var(--border);margin-bottom:1.5rem;display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.trip-title{font-family:var(--serif);font-size:24px;font-weight:500}
+.trip-meta{font-size:13px;color:var(--muted)}
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;flex-wrap:wrap}
+.tab{font-family:var(--sans);font-size:13px;padding:6px 16px;border-radius:20px;border:0.5px solid var(--border-m);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s}
+.tab:hover{background:var(--border);color:var(--ink)}
+.tab.active{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.panel{display:none}.panel.active{display:block}
+
+/* loading */
+.loading{text-align:center;padding:3rem 0;color:var(--muted);font-size:14px}
+.loading span{display:inline-block;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+.error-banner{background:var(--red-bg);color:var(--red-txt);padding:12px 16px;border-radius:var(--rm);font-size:13px;line-height:1.6;margin-bottom:1rem}
+.error-banner a{color:var(--red-txt)}
+
+/* summary */
+.day-card{display:grid;grid-template-columns:88px 1fr;border:0.5px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:border-color .15s;background:var(--surface);margin-bottom:8px}
+.day-card:hover{border-color:var(--border-m)}
+.day-img{background:var(--raised);display:flex;align-items:center;justify-content:center;font-size:30px;min-height:88px}
+.day-body{padding:11px 14px;display:flex;flex-direction:column;gap:4px}
+.day-header{display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap}
+.day-num{font-size:11px;color:var(--hint);white-space:nowrap;padding-top:2px}
+.day-loc{font-family:var(--serif);font-size:14px;font-weight:500;flex:1;min-width:0}
+.day-flag{font-size:10px;padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0}
+.f-ok{background:var(--green-bg);color:var(--green-txt)}
+.f-warn{background:var(--amber-bg);color:var(--amber-txt)}
+.f-pack{background:var(--blue-bg);color:var(--blue-txt)}
+.f-key{background:var(--pink-bg);color:var(--pink-txt)}
+.day-hl{font-size:12px;color:var(--muted);line-height:1.55}
+.day-hl span{display:block}
+.map-link{font-size:11px;color:var(--blue-txt);text-decoration:none;margin-top:2px;width:fit-content}
+.map-link:hover{text-decoration:underline}
+
+/* hourly */
+.day-select-bar{display:flex;gap:5px;flex-wrap:nowrap;overflow-x:auto;margin-bottom:1.25rem;padding-bottom:4px;scrollbar-width:none}
+.day-select-bar::-webkit-scrollbar{display:none}
+.day-btn{font-size:12px;padding:5px 10px;border-radius:var(--rm);border:0.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:var(--sans);transition:all .15s;white-space:nowrap;flex-shrink:0}
+.day-btn:hover{background:var(--raised)}
+.day-btn.active{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.hourly-panel{display:none}.hourly-panel.active{display:block}
+.hourly-header{display:grid;grid-template-columns:100px 1fr;gap:14px;margin-bottom:1.25rem;align-items:start}
+.hourly-hero{border-radius:var(--rm);overflow:hidden;border:0.5px solid var(--border);aspect-ratio:4/3;background:var(--raised);display:flex;align-items:center;justify-content:center;font-size:38px}
+.h-title{font-family:var(--serif);font-size:18px;font-weight:500;margin-bottom:3px}
+.h-date{font-size:12px;color:var(--muted);margin-bottom:7px}
+.h-note{font-size:12px;color:var(--amber-txt);background:var(--amber-bg);padding:6px 10px;border-radius:var(--rm);line-height:1.5}
+.tl-item{display:grid;grid-template-columns:50px 1fr;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.tl-item:last-child{border-bottom:none}
+.tl-time{font-size:12px;color:var(--hint);padding-top:2px;white-space:nowrap}
+.tl-name{font-size:14px;font-weight:500;margin-bottom:2px}
+.tl-detail{font-size:12px;color:var(--muted);line-height:1.5}
+.tl-tags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+.tl-tag{font-size:10px;padding:2px 7px;border-radius:8px;border:0.5px solid var(--border);color:var(--muted)}
+.t-syes{background:var(--green-bg);color:var(--green-txt);border-color:var(--green-bd)}
+.t-sno{background:var(--red-bg);color:var(--red-txt);border-color:var(--red-bd)}
+.t-carrier{background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue-bd)}
+.t-book{background:var(--amber-bg);color:var(--amber-txt);border-color:var(--amber-bd)}
+.t-nap{background:var(--purple-bg);color:var(--purple-txt);border-color:var(--purple-bd)}
+.tl-map{font-size:11px;color:var(--blue-txt);text-decoration:none;margin-top:4px;display:block;width:fit-content}
+.tl-map:hover{text-decoration:underline}
+
+/* locations */
+.map-city-card{border:0.5px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--surface);margin-bottom:8px}
+.map-city-header{padding:10px 14px;border-bottom:0.5px solid var(--border);font-family:var(--serif);font-size:15px;font-weight:500}
+.map-city-header small{font-family:var(--sans);font-size:11px;color:var(--muted);font-weight:400;display:block}
+.map-place{display:flex;justify-content:space-between;align-items:center;padding:7px 14px;border-bottom:0.5px solid var(--border);font-size:13px}
+.map-place:last-child{border-bottom:none}
+.place-type{font-size:11px;color:var(--hint)}
+
+/* tips */
+.tips-group{margin-bottom:1.25rem}
+.tips-group-header{font-family:var(--serif);font-size:15px;font-weight:500;padding:8px 0;border-bottom:0.5px solid var(--border);margin-bottom:4px}
+.tip-row{padding:8px 0;border-bottom:0.5px solid var(--border);font-size:13px}
+.tip-row:last-child{border-bottom:none}
+.tip-name{font-weight:500;margin-bottom:2px}
+.tip-detail{color:var(--muted);line-height:1.5;font-size:12px}
+
+/* config panel */
+.config-bar{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:1.25rem;font-size:13px}
+.config-bar p{color:var(--muted);margin-bottom:8px;line-height:1.5}
+.config-input{display:flex;gap:8px;flex-wrap:wrap}
+.config-input input{flex:1;min-width:200px;padding:6px 10px;border:0.5px solid var(--border-m);border-radius:var(--rm);font-family:var(--sans);font-size:13px;background:var(--raised);color:var(--ink)}
+.config-input button{padding:6px 14px;border-radius:var(--rm);border:0.5px solid var(--border-m);background:var(--ink);color:var(--surface);font-family:var(--sans);font-size:13px;cursor:pointer}
+.sheet-id-display{font-size:11px;color:var(--hint);margin-top:6px;word-break:break-all}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top-bar">
+    <div class="trip-title">Japan · May 2026</div>
+    <div class="trip-meta">15 nights · Tokyo · Hakone · Kyoto · Osaka</div>
+  </div>
+
+  <!-- Google Sheets config -->
+  <div class="config-bar" id="config-bar">
+    <p>Connect your Google Sheet to load live data. Paste your <strong>Sheet ID</strong> below (the long string in your Sheet's URL between <code>/d/</code> and <code>/edit</code>).</p>
+    <div class="config-input">
+      <input type="text" id="sheet-id-input" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms" />
+      <button onclick="saveSheetId()">Connect</button>
+    </div>
+    <div class="sheet-id-display" id="sheet-id-display"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('summary',this)">Summary</button>
+    <button class="tab" onclick="switchTab('hourly',this)">Hour by hour</button>
+    <button class="tab" onclick="switchTab('map',this)">Locations</button>
+    <button class="tab" onclick="switchTab('tips',this)">Tips</button>
+  </div>
+
+  <div class="panel active" id="panel-summary"><div class="loading"><span>Loading days…</span></div></div>
+  <div class="panel" id="panel-hourly"><div class="loading"><span>Loading schedule…</span></div></div>
+  <div class="panel" id="panel-map"><div class="loading"><span>Loading locations…</span></div></div>
+  <div class="panel" id="panel-tips"><div class="loading"><span>Loading tips…</span></div></div>
+</div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+// Sheet tab names — must match exactly what you named tabs in Google Sheets
+const SHEET_TABS = { days:'days', schedule:'schedule', locations:'locations', tips:'tips' };
+const LS_KEY = 'jp2026_sheet_id';
+
+let SHEET_ID = localStorage.getItem(LS_KEY) || '';
+
+function saveSheetId(){
+  const val = document.getElementById('sheet-id-input').value.trim();
+  if(!val){ alert('Please paste a Sheet ID'); return; }
+  // Accept full URL or just the ID
+  const m = val.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  SHEET_ID = m ? m[1] : val;
+  localStorage.setItem(LS_KEY, SHEET_ID);
+  showSheetId();
+  loadAll();
+}
+
+function showSheetId(){
+  const el = document.getElementById('sheet-id-display');
+  if(SHEET_ID){
+    el.textContent = 'Connected: ' + SHEET_ID;
+    document.getElementById('sheet-id-input').value = SHEET_ID;
+  }
+}
+
+// ── CSV FETCH ─────────────────────────────────────────────────────────────────
+function sheetUrl(tab){
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}`;
+}
+
+async function fetchCSV(tab){
+  const r = await fetch(sheetUrl(tab));
+  if(!r.ok) throw new Error(`HTTP ${r.status} fetching tab "${tab}"`);
+  return parseCSV(await r.text());
+}
+
+function parseCSV(text){
+  const rows = [];
+  const lines = text.split(/\r?\n/);
+  const headers = splitCSVLine(lines[0]);
+  for(let i=1;i<lines.length;i++){
+    if(!lines[i].trim()) continue;
+    const vals = splitCSVLine(lines[i]);
+    const obj = {};
+    headers.forEach((h,j) => obj[h.replace(/^"|"$/g,'')] = (vals[j]||'').replace(/^"|"$/g,''));
+    rows.push(obj);
+  }
+  return rows;
+}
+
+function splitCSVLine(line){
+  const result=[], re=/("(?:[^"]|"")*"|[^,]*)/g;
+  let m;
+  while((m=re.exec(line))!==null){
+    if(m.index===re.lastIndex) re.lastIndex++;
+    result.push(m[1]);
+  }
+  return result;
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function gm(q){ return 'https://www.google.com/maps/search/'+encodeURIComponent(q); }
+function flagClass(f){ return f==='ok'?'f-ok':f==='warn'?'f-warn':f==='pack'?'f-pack':'f-key'; }
+
+function errorBanner(msg){
+  return `<div class="error-banner">
+    <strong>Could not load data.</strong> ${msg}<br>
+    Make sure your Google Sheet is published: <em>File → Share → Publish to web → Each sheet as CSV</em>.
+  </div>`;
+}
+
+// ── RENDER SUMMARY ────────────────────────────────────────────────────────────
+function renderSummary(days){
+  return days.map((d,i) => {
+    const hl = [d.highlight_1,d.highlight_2,d.highlight_3].filter(Boolean);
+    return `<div class="day-card" onclick="openDay(${i})">
+      <div class="day-img">${d.emoji||'📅'}</div>
+      <div class="day-body">
+        <div class="day-header">
+          <span class="day-num">${d.date} · ${d.dow}</span>
+          <span class="day-loc">${d.location}</span>
+          <span class="day-flag ${flagClass(d.flag)}">${d.flag_label}</span>
+        </div>
+        <div class="day-hl">${hl.map(h=>`<span>· ${h}</span>`).join('')}</div>
+        ${d.map_query?`<a class="map-link" href="${gm(d.map_query)}" onclick="event.stopPropagation()" target="_blank">Open on Google Maps →</a>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── RENDER HOURLY ─────────────────────────────────────────────────────────────
+function renderHourly(days, schedule){
+  const byDate = {};
+  schedule.forEach(s => {
+    if(!byDate[s.date]) byDate[s.date] = [];
+    byDate[s.date].push(s);
+  });
+
+  const bar = days.map((d,i) =>
+    `<button class="day-btn${i===0?' active':''}" onclick="selDay(${i})">${d.date}</button>`
+  ).join('');
+
+  const panels = days.map((d,i) => {
+    const slots = byDate[d.date] || [];
+    const isWarn = d.flag !== 'ok';
+    const rows = slots.map(s => {
+      const tags = [];
+      if(s.tag_stroller==='yes') tags.push(`<span class="tl-tag t-syes">stroller OK</span>`);
+      if(s.tag_stroller==='no') tags.push(`<span class="tl-tag t-sno">no stroller</span>`);
+      if(s.tag_carrier==='yes') tags.push(`<span class="tl-tag t-carrier">carrier</span>`);
+      if(s.tag_book==='yes') tags.push(`<span class="tl-tag t-book">book ahead</span>`);
+      if(s.tag_nap==='yes') tags.push(`<span class="tl-tag t-nap">nap time</span>`);
+      return `<div class="tl-item">
+        <div class="tl-time">${s.time}</div>
+        <div>
+          <div class="tl-name">${s.name}</div>
+          <div class="tl-detail">${s.detail}</div>
+          ${tags.length?`<div class="tl-tags">${tags.join('')}</div>`:''}
+          ${s.map_query?`<a class="tl-map" href="${gm(s.map_query)}" target="_blank">Maps →</a>`:''}
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="hourly-panel${i===0?' active':''}" id="hp-${i}">
+      <div class="hourly-header">
+        <div class="hourly-hero">${d.emoji||'📅'}</div>
+        <div>
+          <div class="h-title">${d.location}</div>
+          <div class="h-date">${d.date} · ${d.dow}</div>
+          ${isWarn?`<div class="h-note">${d.flag_label} — ${d.highlight_1}</div>`:''}
+        </div>
+      </div>
+      <div>${rows||'<p style="color:var(--muted);font-size:13px;padding:1rem 0">No schedule entries for this day.</p>'}</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="day-select-bar" id="day-select-bar">${bar}</div><div id="hourly-panels">${panels}</div>`;
+}
+
+// ── RENDER LOCATIONS ──────────────────────────────────────────────────────────
+function renderLocations(locations){
+  const byCityOrder = [];
+  const cityMap = {};
+  locations.forEach(l => {
+    if(!cityMap[l.city]){ cityMap[l.city]=[];byCityOrder.push(l.city); }
+    cityMap[l.city].push(l);
+  });
+  return byCityOrder.map(city => {
+    const places = cityMap[city];
+    const dates = places[0].dates;
+    const rows = places.map(p =>
+      `<div class="map-place">
+        <div><div>${p.place_name}</div><div class="place-type">${p.place_type}</div></div>
+        <a class="map-link" href="${gm(p.map_query)}" target="_blank">Maps →</a>
+      </div>`
+    ).join('');
+    return `<div class="map-city-card">
+      <div class="map-city-header">${city}<small>${dates}</small></div>
+      ${rows}
+    </div>`;
+  }).join('');
+}
+
+// ── RENDER TIPS ───────────────────────────────────────────────────────────────
+function renderTips(tips){
+  const byCatOrder = [];
+  const catMap = {};
+  tips.forEach(t => {
+    if(!catMap[t.category]){ catMap[t.category]=[];byCatOrder.push(t.category); }
+    catMap[t.category].push(t);
+  });
+  return byCatOrder.map(cat => {
+    const rows = catMap[cat].map(t =>
+      `<div class="tip-row">
+        <div class="tip-name">${t.item}</div>
+        <div class="tip-detail">${t.detail}</div>
+      </div>`
+    ).join('');
+    return `<div class="tips-group">
+      <div class="tips-group-header">${cat}</div>
+      ${rows}
+    </div>`;
+  }).join('');
+}
+
+// ── TAB / DAY SWITCHING ───────────────────────────────────────────────────────
+function switchTab(id, el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+}
+
+function openDay(i){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelector('.tabs').children[1].classList.add('active');
+  document.getElementById('panel-hourly').classList.add('active');
+  selDay(i);
+}
+
+function selDay(i){
+  document.querySelectorAll('.day-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.hourly-panel').forEach(p=>p.classList.remove('active'));
+  const bar = document.getElementById('day-select-bar');
+  if(bar && bar.children[i]){
+    bar.children[i].classList.add('active');
+    bar.children[i].scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+  }
+  const hp = document.getElementById('hp-'+i);
+  if(hp) hp.classList.add('active');
+}
+
+// ── LOAD ALL DATA ─────────────────────────────────────────────────────────────
+async function loadAll(){
+  if(!SHEET_ID){
+    ['summary','hourly','map','tips'].forEach(id =>
+      document.getElementById('panel-'+id).innerHTML =
+        '<p style="color:var(--muted);font-size:13px;padding:1rem 0">Paste your Google Sheet ID above to load your itinerary.</p>'
+    );
+    return;
+  }
+
+  // Fetch all four tabs in parallel
+  let days, schedule, locations, tips;
+  try {
+    [days, schedule, locations, tips] = await Promise.all([
+      fetchCSV(SHEET_TABS.days),
+      fetchCSV(SHEET_TABS.schedule),
+      fetchCSV(SHEET_TABS.locations),
+      fetchCSV(SHEET_TABS.tips)
+    ]);
+  } catch(e) {
+    const msg = `Error: ${e.message}. Check that your Sheet ID is correct and the sheet is published to the web.`;
+    ['summary','hourly','map','tips'].forEach(id =>
+      document.getElementById('panel-'+id).innerHTML = errorBanner(msg)
+    );
+    return;
+  }
+
+  document.getElementById('panel-summary').innerHTML = renderSummary(days);
+  document.getElementById('panel-hourly').innerHTML = renderHourly(days, schedule);
+  document.getElementById('panel-map').innerHTML = renderLocations(locations);
+  document.getElementById('panel-tips').innerHTML = renderTips(tips);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+showSheetId();
+loadAll();
+</script>
+</body>
+</html>
