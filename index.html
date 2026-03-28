@@ -6,6 +6,7 @@
 <title>Japan · May 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
 /* ── RESET & TOKENS ─────────────────────────────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
@@ -344,6 +345,91 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 .tip-row:last-child{border-bottom:none}
 .tip-name{font-weight:600;margin-bottom:2px}
 .tip-detail{color:var(--muted);line-height:1.55;font-size:12px}
+
+/* ── MAP ────────────────────────────────────────────────────────────────── */
+.map-toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.map-city-btn{
+  font-family:var(--sans);font-size:12px;font-weight:600;
+  padding:5px 14px;border-radius:20px;border:1px solid transparent;
+  cursor:pointer;transition:all .15s;
+}
+.map-city-btn.all{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.map-city-btn.inactive{background:var(--surface);color:var(--muted);border-color:var(--border-m)}
+.map-city-btn.inactive:hover{border-color:var(--ink);color:var(--ink)}
+.map-city-btn[data-city="tokyo"]  .mc-dot{background:#DC2626}
+.map-city-btn[data-city="hakone"] .mc-dot{background:#92400E}
+.map-city-btn[data-city="kyoto"]  .mc-dot{background:#B45309}
+.map-city-btn[data-city="nara"]   .mc-dot{background:#15803D}
+.map-city-btn[data-city="osaka"]  .mc-dot{background:#1D4ED8}
+.mc-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle}
+#trip-map{
+  height:520px;border-radius:var(--r);
+  border:1px solid var(--border);box-shadow:var(--shadow-md);
+  overflow:hidden;
+}
+.map-legend{
+  display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;
+  font-size:11px;color:var(--muted);
+}
+.map-legend-item{display:flex;align-items:center;gap:5px}
+.map-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+/* Leaflet popup override */
+.leaflet-popup-content-wrapper{border-radius:var(--rm);box-shadow:var(--shadow-md)}
+.leaflet-popup-content{font-family:var(--sans);font-size:13px;margin:10px 14px;line-height:1.5}
+.popup-name{font-weight:600;margin-bottom:2px}
+.popup-detail{font-size:12px;color:#666;margin-bottom:4px}
+.popup-city{font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;display:inline-block}
+
+/* ── BUDGET ─────────────────────────────────────────────────────────────── */
+.budget-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:600px){.budget-summary-grid{grid-template-columns:1fr}}
+.budget-summary-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow-sm);
+}
+.bsc-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.bsc-value{font-family:var(--serif);font-size:26px;font-weight:500;line-height:1.1}
+.bsc-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.bsc-under{color:var(--green-txt)}.bsc-over{color:var(--red-txt)}
+.budget-cats{margin-bottom:20px}
+.budget-cat-row{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--rm);padding:13px 16px;margin-bottom:8px;
+  box-shadow:var(--shadow-sm);
+}
+.bcat-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.bcat-name{font-weight:600;font-size:14px}
+.bcat-amounts{font-size:12px;color:var(--muted)}
+.bcat-bar-track{height:6px;border-radius:3px;background:var(--raised);overflow:hidden;border:1px solid var(--border)}
+.bcat-bar-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.bcat-bar-ok{background:var(--green-txt)}
+.bcat-bar-warn{background:var(--amber-txt)}
+.bcat-bar-over{background:var(--red-txt)}
+.budget-table{width:100%;border-collapse:collapse;font-size:13px}
+.budget-table th{
+  text-align:left;padding:8px 12px;font-size:11px;font-weight:600;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.5px;
+  border-bottom:2px solid var(--border);background:var(--raised);
+}
+.budget-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.budget-table tr:last-child td{border-bottom:none}
+.budget-table tr:hover td{background:var(--raised)}
+.bt-cat-badge{
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;
+  display:inline-block;
+}
+.bt-planned{color:var(--ink);font-weight:600}
+.bt-actual{color:var(--green-txt);font-weight:600}
+.bt-actual.over{color:var(--red-txt)}
+.bt-notes{color:var(--muted);font-size:11px;margin-top:2px}
+.budget-table-wrap{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-sm);
+}
+.budget-section-title{
+  font-family:var(--serif);font-size:17px;font-weight:500;
+  margin-bottom:10px;margin-top:4px;
+}
 </style>
 </head>
 <body>
@@ -375,19 +461,102 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
     <button class="tab" onclick="switchTab('hourly',this)">Daily</button>
     <button class="tab" onclick="switchTab('hotels',this)">Hotels</button>
     <button class="tab" onclick="switchTab('tips',this)">Tips</button>
+    <button class="tab" onclick="switchTab('map',this)">Map</button>
+    <button class="tab" onclick="switchTab('budget',this)">Budget</button>
   </div>
 
   <div class="panel active" id="panel-summary"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
   <div class="panel" id="panel-hourly"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
   <div class="panel" id="panel-hotels"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
   <div class="panel" id="panel-tips"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
+  <div class="panel" id="panel-map"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
+  <div class="panel" id="panel-budget"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
 
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // ── CONFIG ───────────────────────────────────────────────────────────────────
-const SHEET_TABS = { days:'Days', schedule:'Schedule', hotels:'Hotels', tips:'Tips' };
+const SHEET_TABS = { days:'Days', schedule:'Schedule', hotels:'Hotels', tips:'Tips', budget:'Budget' };
 const LS_KEY = 'jp2026_sheet_id';
+
+// ── ACTIVITY THUMBNAIL LOOKUP (map_query → image URL) ────────────────────────
+const ACTIVITY_IMAGES = {
+  'Senso-ji Temple Asakusa Tokyo':       'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/24701-Asakusa%2C_Tokyo.jpg/480px-24701-Asakusa%2C_Tokyo.jpg',
+  'Sumida Park Asakusa playground Tokyo':'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Sumida_Park_sakura_2010.jpg/480px-Sumida_Park_sakura_2010.jpg',
+  'Tokyo Skytree':                        'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Tokyo_Sky_Tree_2012.JPG/400px-Tokyo_Sky_Tree_2012.JPG',
+  'Shinobazu Pond Ueno Tokyo':           'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Shinobazunoike_2009.jpg/480px-Shinobazunoike_2009.jpg',
+  'Ameyoko Market Ueno Tokyo':           'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Ueno_Ameyoko_Tokyo_Japan.jpg/480px-Ueno_Ameyoko_Tokyo_Japan.jpg',
+  'Meiji Shrine Harajuku Tokyo':         'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Torii_of_Meiji_Jingu.JPG/400px-Torii_of_Meiji_Jingu.JPG',
+  'Yoyogi Park playground Tokyo':        'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Yoyogi_Park_area.jpg/480px-Yoyogi_Park_area.jpg',
+  'Omotesando Tokyo':                    'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Omotesando_Hills.jpg/480px-Omotesando_Hills.jpg',
+  'Shibuya Crossing Tokyo':              'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Shibuya_scramble.jpg/480px-Shibuya_scramble.jpg',
+  'Hakone Ropeway Owakudani':            'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Owakudani_from_Hakone_Ropeway.JPG/480px-Owakudani_from_Hakone_Ropeway.JPG',
+  'Lake Ashi Pier Hakone':              'https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Lake_Ashi_and_Mt._Fuji.jpg/480px-Lake_Ashi_and_Mt._Fuji.jpg',
+  'Ryokan Ubuya Lake Kawaguchi':        'https://ak-d.tripcdn.com/images/0225a12000k3lnjtbB22F_R_960_660_R5_D.jpg',
+  'Arashiyama Bamboo Grove Kyoto':      'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Bamboo_groves_in_Sagano%2C_Arashiyama.jpg/400px-Bamboo_groves_in_Sagano%2C_Arashiyama.jpg',
+  'Tenryu-ji Temple Garden Arashiyama Kyoto':'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Tenryu-ji_Sogen_Pond.jpg/480px-Tenryu-ji_Sogen_Pond.jpg',
+  'Sagano Scenic Railway Arashiyama Kyoto':  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Sagano_Scenic_Railway.JPG/480px-Sagano_Scenic_Railway.JPG',
+  'Gion Shirakawa Canal Kyoto':         'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Shirakawa_Canal%2C_Kyoto.jpg/480px-Shirakawa_Canal%2C_Kyoto.jpg',
+  'Fushimi Inari Taisha Shrine Kyoto':  'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Fushimi_Inari_Taisha_torii.jpg/400px-Fushimi_Inari_Taisha_torii.jpg',
+  'Tofuku-ji Temple Kyoto':             'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Tofukuji-hojo.jpg/480px-Tofukuji-hojo.jpg',
+  'Nijo Castle Kyoto':                  'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Nijojo_Castle_Kyoto.JPG/480px-Nijojo_Castle_Kyoto.JPG',
+  'Nishiki Market Kyoto':               'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Nishiki_Market_Kyoto.jpg/480px-Nishiki_Market_Kyoto.jpg',
+  'Nara Deer Park':                     'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Nara_deer.jpg/480px-Nara_deer.jpg',
+  'Todai-ji Temple Nara':               'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Todaiji0511.JPG/480px-Todaiji0511.JPG',
+  'Kasuga Grand Shrine path Nara':      'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Kasugataisha05s3200.jpg/480px-Kasugataisha05s3200.jpg',
+  'teamLab Biovortex Kyoto Station':    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/TeamLab_Borderless_2019_%2848671533276%29.jpg/480px-TeamLab_Borderless_2019_%2848671533276%29.jpg',
+  'Kura Sushi Asakusa Tokyo':           'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Kura_Sushi_conveyor_belt.jpg/480px-Kura_Sushi_conveyor_belt.jpg',
+};
+
+// ── HARDCODED COORDINATES (map_query → [lat, lng, city]) ─────────────────────
+const COORDS = {
+  'MIMARU Tokyo Asakusa Station':       [35.7140, 139.7993, 'tokyo'],
+  'Sumida River Tokyo':                 [35.7160, 139.7985, 'tokyo'],
+  'Senso-ji Temple Asakusa Tokyo':      [35.7148, 139.7967, 'tokyo'],
+  'Sumida Park Asakusa playground Tokyo':[35.7162, 139.7993, 'tokyo'],
+  'Tokyo Skytree':                      [35.7101, 139.8107, 'tokyo'],
+  'Kura Sushi Asakusa Tokyo':           [35.7138, 139.7990, 'tokyo'],
+  'Shinobazu Pond Ueno Tokyo':          [35.7162, 139.7716, 'tokyo'],
+  'Ameyoko Market Ueno Tokyo':          [35.7088, 139.7742, 'tokyo'],
+  'Yanaka Tokyo':                       [35.7236, 139.7706, 'tokyo'],
+  'Meiji Shrine Harajuku Tokyo':        [35.6764, 139.6993, 'tokyo'],
+  'Yoyogi Park playground Tokyo':       [35.6714, 139.6944, 'tokyo'],
+  'Omotesando Tokyo':                   [35.6639, 139.7101, 'tokyo'],
+  'Shibuya Crossing Tokyo':             [35.6595, 139.7004, 'tokyo'],
+  'Shibuya Hikarie food floor Tokyo':   [35.6588, 139.7027, 'tokyo'],
+  '7-Eleven Asakusa Tokyo':             [35.7138, 139.7994, 'tokyo'],
+  'Odakyu Shinjuku Station Tokyo':      [35.6896, 139.7006, 'tokyo'],
+  'Gusto Ueno Tokyo':                   [35.7080, 139.7750, 'tokyo'],
+  'Hakone-Yumoto Station':              [35.2448, 139.0461, 'hakone'],
+  'Ryokan Ubuya Lake Kawaguchi':        [35.5044, 138.7535, 'hakone'],
+  'Hakone Ropeway Owakudani':           [35.2413, 139.0262, 'hakone'],
+  'Lake Ashi Pier Hakone':             [35.2008, 139.0238, 'hakone'],
+  'Hakone-machi Pier restaurants':      [35.1965, 139.0225, 'hakone'],
+  'Odawara Station':                    [35.2562, 139.1551, 'hakone'],
+  'Kyoto Station':                      [34.9858, 135.7588, 'kyoto'],
+  'Hotel Shizuru Kyoto Kawaramachi':    [34.9982, 135.7681, 'kyoto'],
+  'Gion Shirakawa Canal Kyoto':         [35.0046, 135.7745, 'kyoto'],
+  'Arashiyama Bamboo Grove Kyoto':      [35.0175, 135.6720, 'kyoto'],
+  'Tenryu-ji Temple Garden Arashiyama Kyoto':[35.0171, 135.6729, 'kyoto'],
+  'Sagano Scenic Railway Arashiyama Kyoto':  [35.0172, 135.6726, 'kyoto'],
+  'Arashiyama Yoshimura Restaurant Kyoto':   [35.0133, 135.6760, 'kyoto'],
+  'Kyoto Gogyo Restaurant':             [35.0049, 135.7680, 'kyoto'],
+  'Fushimi Inari Taisha Shrine Kyoto':  [34.9671, 135.7727, 'kyoto'],
+  'Tofuku-ji Temple Kyoto':             [34.9765, 135.7760, 'kyoto'],
+  'Kendonya Udon Fushimi Kyoto':        [34.9685, 135.7731, 'kyoto'],
+  'Nijo Castle Kyoto':                  [35.0142, 135.7482, 'kyoto'],
+  'Katsukura Sanjo Kyoto':              [35.0073, 135.7690, 'kyoto'],
+  'Nishiki Market Kyoto':               [35.0044, 135.7648, 'kyoto'],
+  'teamLab Biovortex Kyoto Station':    [34.9858, 135.7588, 'kyoto'],
+  'Porta Dining Kyoto Station':         [34.9858, 135.7588, 'kyoto'],
+  'Kintetsu Kyoto Station':             [34.9858, 135.7588, 'kyoto'],
+  'Nara Deer Park':                     [34.6864, 135.8393, 'nara'],
+  'Todai-ji Temple Nara':               [34.6888, 135.8395, 'nara'],
+  'Kintetsu Nara Station restaurants':  [34.6852, 135.8348, 'nara'],
+  'Kasuga Grand Shrine path Nara':      [34.6814, 135.8452, 'nara'],
+  'Kintetsu Nara Station':              [34.6852, 135.8348, 'nara'],
+};
 let SHEET_ID = localStorage.getItem(LS_KEY) || '';
 
 function saveSheetId(){
@@ -658,8 +827,9 @@ function renderHourly(days, schedule){
       if(s.tag_carrier==='yes')  tags.push(`<span class="tl-tag t-carrier">carrier</span>`);
       if(s.tag_book==='yes')     tags.push(`<span class="tl-tag t-book">book ahead</span>`);
       if(s.tag_nap==='yes')      tags.push(`<span class="tl-tag t-nap">nap time</span>`);
-      const thumb = s.image_url
-        ? `<img class="tl-thumb" src="${s.image_url}" alt="${s.name}" loading="lazy" onerror="this.style.display='none'">`
+      const imgSrc = s.image_url || ACTIVITY_IMAGES[s.map_query] || '';
+      const thumb = imgSrc
+        ? `<img class="tl-thumb" src="${imgSrc}" alt="${s.name}" loading="lazy" onerror="this.style.display='none'">`
         : '';
       return `<div class="tl-item">
         <div class="tl-time">${s.time}</div>
@@ -747,12 +917,204 @@ function renderTips(tips){
   </div>`).join('');
 }
 
+// ── RENDER MAP ────────────────────────────────────────────────────────────────
+const CITY_COLORS = {
+  tokyo:  { hex:'#DC2626', light:'#FEE2E2', dark:'#991B1B', label:'Tokyo'  },
+  hakone: { hex:'#92400E', light:'#F3E8D8', dark:'#7C4A1E', label:'Hakone' },
+  kyoto:  { hex:'#B45309', light:'#FEF9C3', dark:'#854D0E', label:'Kyoto'  },
+  nara:   { hex:'#15803D', light:'#DCFCE7', dark:'#166534', label:'Nara'   },
+  osaka:  { hex:'#1D4ED8', light:'#DBEAFE', dark:'#1E3A8A', label:'Osaka'  },
+};
+let _leafletMap = null;
+let _mapMarkers = [];
+let _activeCity = 'all';
+let _scheduleForMap = [];
+
+function initMap(schedule){
+  _scheduleForMap = schedule;
+  const panel = document.getElementById('panel-map');
+
+  // City filter buttons
+  const cityBtns = Object.entries(CITY_COLORS).map(([city,c])=>
+    `<button class="map-city-btn inactive" data-city="${city}" onclick="filterMap('${city}')">
+      <span class="mc-dot" style="background:${c.hex}"></span>${c.label}
+    </button>`
+  ).join('');
+
+  panel.innerHTML = `
+    <div class="map-toolbar">
+      <button class="map-city-btn all" onclick="filterMap('all')">All cities</button>
+      ${cityBtns}
+    </div>
+    <div id="trip-map"></div>
+    <div class="map-legend">
+      ${Object.entries(CITY_COLORS).map(([city,c])=>
+        `<div class="map-legend-item">
+          <div class="map-legend-dot" style="background:${c.hex}"></div>
+          <span>${c.label}</span>
+        </div>`
+      ).join('')}
+    </div>`;
+
+  // Initialise Leaflet
+  if(_leafletMap){ _leafletMap.remove(); _leafletMap=null; }
+  _leafletMap = L.map('trip-map').setView([35.5, 137.5], 7);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    maxZoom:18,
+    attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(_leafletMap);
+
+  _mapMarkers = [];
+  const seen = new Set();
+  schedule.forEach(s=>{
+    const c = COORDS[s.map_query];
+    if(!c || seen.has(s.map_query)) return;
+    seen.add(s.map_query);
+    const col = CITY_COLORS[c[2]] || CITY_COLORS.tokyo;
+    const icon = L.divIcon({
+      className:'',
+      html:`<div style="width:14px;height:14px;border-radius:50%;background:${col.hex};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>`,
+      iconSize:[14,14],iconAnchor:[7,7]
+    });
+    const m = L.marker([c[0],c[1]],{icon}).addTo(_leafletMap);
+    const thumb = ACTIVITY_IMAGES[s.map_query]
+      ? `<img src="${ACTIVITY_IMAGES[s.map_query]}" style="width:100%;height:80px;object-fit:cover;border-radius:5px;margin-bottom:6px;display:block" onerror="this.style.display='none'">`
+      : '';
+    m.bindPopup(`${thumb}<div class="popup-name">${s.name}</div>
+      <div class="popup-detail">${s.detail}</div>
+      <span class="popup-city" style="background:${col.light};color:${col.dark}">${col.label}</span>
+      ${s.map_query?`<br><a href="https://www.google.com/maps/search/${encodeURIComponent(s.map_query)}" target="_blank" style="font-size:11px;color:#1660A8;font-weight:500">Open in Maps →</a>`:''}`);
+    m._city = c[2];
+    _mapMarkers.push(m);
+  });
+  filterMap('all');
+}
+
+function filterMap(city){
+  _activeCity = city;
+  // Update button styles
+  document.querySelectorAll('.map-city-btn').forEach(b=>{
+    const bc = b.dataset.city || 'all';
+    const isActive = city==='all' ? bc==='all' : bc===city;
+    if(bc==='all'){
+      b.style.background = city==='all' ? 'var(--ink)' : 'var(--surface)';
+      b.style.color = city==='all' ? 'var(--surface)' : 'var(--muted)';
+      b.style.borderColor = city==='all' ? 'var(--ink)' : 'var(--border-m)';
+    } else {
+      const col = CITY_COLORS[bc];
+      if(isActive){ b.style.background=col.light; b.style.color=col.dark; b.style.borderColor=col.hex; }
+      else { b.style.background='var(--surface)'; b.style.color='var(--muted)'; b.style.borderColor='var(--border-m)'; }
+    }
+  });
+  // Show/hide markers
+  _mapMarkers.forEach(m=>{
+    const visible = city==='all' || m._city===city;
+    if(visible){ if(!_leafletMap.hasLayer(m)) m.addTo(_leafletMap); }
+    else { if(_leafletMap.hasLayer(m)) _leafletMap.removeLayer(m); }
+  });
+  // Fit bounds to visible markers
+  const visible = _mapMarkers.filter(m=>_leafletMap.hasLayer(m));
+  if(visible.length>1){
+    const bounds = L.latLngBounds(visible.map(m=>m.getLatLng()));
+    _leafletMap.fitBounds(bounds,{padding:[30,30]});
+  } else if(visible.length===1){
+    _leafletMap.setView(visible[0].getLatLng(),13);
+  }
+}
+
+// ── RENDER BUDGET ─────────────────────────────────────────────────────────────
+function renderBudget(items){
+  if(!items||!items.length)
+    return `<p class="empty-state">No budget data found. Add a <strong>Budget</strong> tab with columns:<br>
+      <code>category, item, planned, actual, notes</code></p>`;
+
+  // Parse numbers: strip currency symbols, commas
+  function parseMoney(v){ return parseFloat((v||'0').replace(/[^0-9.]/g,''))||0; }
+  function fmt(n){ return n===0?'—':'¥'+Math.round(n).toLocaleString(); }
+
+  const totalPlanned = items.reduce((s,i)=>s+parseMoney(i.planned),0);
+  const totalActual  = items.reduce((s,i)=>s+parseMoney(i.actual),0);
+  const remaining    = totalPlanned - totalActual;
+  const pct          = totalPlanned>0 ? Math.min(100,(totalActual/totalPlanned)*100) : 0;
+
+  // Group by category
+  const catOrder=[], catMap={};
+  items.forEach(it=>{
+    const cat = it.category||'Other';
+    if(!catMap[cat]){ catMap[cat]=[]; catOrder.push(cat); }
+    catMap[cat].push(it);
+  });
+
+  const catBars = catOrder.map(cat=>{
+    const rows = catMap[cat];
+    const cp = rows.reduce((s,i)=>s+parseMoney(i.planned),0);
+    const ca = rows.reduce((s,i)=>s+parseMoney(i.actual),0);
+    const pp = cp>0?Math.min(100,(ca/cp)*100):0;
+    const barCls = pp>100?'bcat-bar-over':pp>80?'bcat-bar-warn':'bcat-bar-ok';
+    return `<div class="budget-cat-row">
+      <div class="bcat-header">
+        <span class="bcat-name">${cat}</span>
+        <span class="bcat-amounts">${fmt(ca)} / ${fmt(cp)}</span>
+      </div>
+      <div class="bcat-bar-track"><div class="bcat-bar-fill ${barCls}" style="width:${pp}%"></div></div>
+    </div>`;
+  }).join('');
+
+  // Category color palette for badges
+  const catColors = ['--blue','--green','--amber','--pink','--red','--purple'];
+  const catColorMap = {};
+  catOrder.forEach((c,i)=>catColorMap[c]=catColors[i%catColors.length]);
+
+  const tableRows = items.map(it=>{
+    const p = parseMoney(it.planned), a = parseMoney(it.actual);
+    const isOver = a>p && p>0;
+    const col = catColorMap[it.category||'Other'];
+    return `<tr>
+      <td><span class="bt-cat-badge" style="background:var(${col}-bg);color:var(${col}-txt);border:1px solid var(${col}-bd)">${it.category||'Other'}</span></td>
+      <td>${it.item||''}<div class="bt-notes">${it.notes||''}</div></td>
+      <td class="bt-planned">${fmt(p)}</td>
+      <td class="bt-actual${isOver?' over':''}">${fmt(a)}</td>
+    </tr>`;
+  }).join('');
+
+  const remCls = remaining>=0?'bsc-under':'bsc-over';
+
+  return `
+    <div class="budget-summary-grid">
+      <div class="budget-summary-card">
+        <div class="bsc-label">Total Budget</div>
+        <div class="bsc-value">${fmt(totalPlanned)}</div>
+        <div class="bsc-sub">${pct.toFixed(0)}% spent</div>
+      </div>
+      <div class="budget-summary-card">
+        <div class="bsc-label">Spent So Far</div>
+        <div class="bsc-value">${fmt(totalActual)}</div>
+        <div class="bsc-sub">${items.filter(i=>parseMoney(i.actual)>0).length} items logged</div>
+      </div>
+      <div class="budget-summary-card">
+        <div class="bsc-label">Remaining</div>
+        <div class="bsc-value ${remCls}">${fmt(Math.abs(remaining))}</div>
+        <div class="bsc-sub">${remaining>=0?'under budget':'over budget'}</div>
+      </div>
+    </div>
+    <div class="budget-section-title">By Category</div>
+    <div class="budget-cats">${catBars}</div>
+    <div class="budget-section-title">All Items</div>
+    <div class="budget-table-wrap">
+      <table class="budget-table">
+        <thead><tr><th>Category</th><th>Item</th><th>Planned</th><th>Actual</th></tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </div>`;
+}
+
 // ── TAB / DAY SWITCHING ───────────────────────────────────────────────────────
 function switchTab(id, el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('panel-'+id).classList.add('active');
+  if(id==='map' && _scheduleForMap.length) initMap(_scheduleForMap);
 }
 function openDay(i){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -781,14 +1143,14 @@ function selDay(i){
 // ── LOAD ALL DATA ─────────────────────────────────────────────────────────────
 async function loadAll(){
   if(!SHEET_ID){
-    ['summary','hourly','hotels','tips'].forEach(id=>
+    ['summary','hourly','hotels','tips','map','budget'].forEach(id=>
       document.getElementById('panel-'+id).innerHTML =
         `<p class="empty-state">Paste your Google Sheet ID above to load your itinerary.</p>`
     );
     return;
   }
 
-  let days, schedule, hotels, tips;
+  let days, schedule, hotels, tips, budget;
   try {
     [days, schedule, hotels, tips] = await Promise.all([
       fetchCSV(SHEET_TABS.days),
@@ -796,9 +1158,11 @@ async function loadAll(){
       fetchCSV(SHEET_TABS.hotels),
       fetchCSV(SHEET_TABS.tips)
     ]);
+    // Budget tab is optional — don't fail the whole load if missing
+    try { budget = await fetchCSV(SHEET_TABS.budget); } catch(e){ budget = []; }
   } catch(e){
     const msg = `${e.message}. Check the Sheet ID and that it's published to the web.`;
-    ['summary','hourly','hotels','tips'].forEach(id=>
+    ['summary','hourly','hotels','tips','map','budget'].forEach(id=>
       document.getElementById('panel-'+id).innerHTML = errorBanner(msg)
     );
     return;
@@ -808,6 +1172,14 @@ async function loadAll(){
   document.getElementById('panel-hourly').innerHTML  = renderHourly(days, schedule);
   document.getElementById('panel-hotels').innerHTML  = renderHotels(hotels);
   document.getElementById('panel-tips').innerHTML    = renderTips(tips);
+  document.getElementById('panel-budget').innerHTML  = renderBudget(budget);
+
+  // Store schedule for map (map is only rendered on first tab open)
+  _scheduleForMap = schedule;
+  document.getElementById('panel-map').innerHTML =
+    `<div style="color:var(--muted);font-size:13px;padding:2rem 0;text-align:center">
+      Click the <strong>Map</strong> tab to load the interactive map.
+    </div>`;
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
