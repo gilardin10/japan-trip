@@ -10,36 +10,38 @@
 /* ── RESET & TOKENS ─────────────────────────────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ink:#111110;--muted:#6b6b6b;--hint:#aaa;
-  --surface:#ffffff;--raised:#f7f6f3;
-  --border:rgba(0,0,0,.08);--border-m:rgba(0,0,0,.15);
-  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 2px 8px rgba(0,0,0,.04);
-  --shadow-md:0 4px 16px rgba(0,0,0,.09),0 1px 4px rgba(0,0,0,.05);
-  --shadow-hover:0 8px 28px rgba(0,0,0,.13),0 2px 8px rgba(0,0,0,.06);
-  --r:16px;--rm:10px;--rs:6px;
+  --ink:#1A1410;--muted:#72645A;--hint:#B0A49A;
+  --surface:#FFFFFF;--raised:#F6F3EC;
+  --border:rgba(26,20,16,.08);--border-m:rgba(26,20,16,.16);
+  --shadow-sm:0 1px 3px rgba(26,20,16,.07),0 2px 8px rgba(26,20,16,.05);
+  --shadow-md:0 4px 16px rgba(26,20,16,.10),0 1px 4px rgba(26,20,16,.06);
+  --shadow-hover:0 10px 32px rgba(26,20,16,.16),0 2px 8px rgba(26,20,16,.08);
+  --accent:#BF3934;--accent-bg:#FDF1F0;
+  --r:14px;--rm:9px;--rs:6px;
   --serif:'Playfair Display',Georgia,serif;
   --sans:'DM Sans',system-ui,sans-serif;
-  --blue-bg:#E6F1FB;--blue-txt:#185FA5;--blue-bd:#B5D4F4;
-  --green-bg:#EAF3DE;--green-txt:#3B6D11;--green-bd:#C0DD97;
-  --amber-bg:#FAEEDA;--amber-txt:#854F0B;--amber-bd:#FAC775;
-  --pink-bg:#FBEAF0;--pink-txt:#993556;--pink-bd:#F4C0D1;
-  --red-bg:#FCEBEB;--red-txt:#A32D2D;--red-bd:#F7C1C1;
-  --purple-bg:#EEEDFE;--purple-txt:#534AB7;--purple-bd:#CECBF6;
+  --blue-bg:#E8F2FC;--blue-txt:#1660A8;--blue-bd:#B8D5F5;
+  --green-bg:#EBF4DF;--green-txt:#3A6D12;--green-bd:#C2DE99;
+  --amber-bg:#FBF0DC;--amber-txt:#87510C;--amber-bd:#FBCA78;
+  --pink-bg:#FCE8F0;--pink-txt:#9A3357;--pink-bd:#F5C2D3;
+  --red-bg:#FDEDED;--red-txt:#A32E2E;--red-bd:#F8C2C2;
+  --purple-bg:#EEEDFE;--purple-txt:#524AB8;--purple-bd:#CFCCF7;
 }
 @media(prefers-color-scheme:dark){
   :root{
-    --ink:#f0ede6;--muted:#909088;--hint:#5c5c54;
-    --surface:#1a1916;--raised:#222120;
-    --border:rgba(255,255,255,.08);--border-m:rgba(255,255,255,.15);
-    --shadow-sm:0 1px 3px rgba(0,0,0,.4),0 2px 8px rgba(0,0,0,.25);
-    --shadow-md:0 4px 16px rgba(0,0,0,.5),0 1px 4px rgba(0,0,0,.3);
-    --shadow-hover:0 8px 28px rgba(0,0,0,.6),0 2px 8px rgba(0,0,0,.3);
-    --blue-bg:#0c2a4a;--blue-txt:#85B7EB;--blue-bd:#1d4f80;
-    --green-bg:#1a2e0a;--green-txt:#97C459;--green-bd:#2d4f15;
-    --amber-bg:#2e1e04;--amber-txt:#EF9F27;--amber-bd:#5a3a08;
-    --pink-bg:#2a0f1a;--pink-txt:#ED93B1;--pink-bd:#4d1a2e;
-    --red-bg:#2a0808;--red-txt:#F09595;--red-bd:#4d1414;
-    --purple-bg:#1a1840;--purple-txt:#AFA9EC;--purple-bd:#302c6e;
+    --ink:#F0EBE3;--muted:#9C8E83;--hint:#5E5449;
+    --surface:#1E1B16;--raised:#252119;
+    --border:rgba(240,235,227,.08);--border-m:rgba(240,235,227,.16);
+    --shadow-sm:0 1px 3px rgba(0,0,0,.45),0 2px 8px rgba(0,0,0,.28);
+    --shadow-md:0 4px 16px rgba(0,0,0,.55),0 1px 4px rgba(0,0,0,.35);
+    --shadow-hover:0 10px 32px rgba(0,0,0,.65),0 2px 8px rgba(0,0,0,.4);
+    --accent:#E05A55;--accent-bg:#2E1210;
+    --blue-bg:#0D2B4C;--blue-txt:#87B9ED;--blue-bd:#1E5182;
+    --green-bg:#1B2F0B;--green-txt:#98C65C;--green-bd:#2E5116;
+    --amber-bg:#301F04;--amber-txt:#F0A128;--amber-bd:#5C3C08;
+    --pink-bg:#2B1019;--pink-txt:#EF95B3;--pink-bd:#4E1B2F;
+    --red-bg:#2C0A0A;--red-txt:#F29696;--red-bd:#501616;
+    --purple-bg:#1B1941;--purple-txt:#B1AAEE;--purple-bd:#312E70;
   }
 }
 
@@ -112,7 +114,7 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
   cursor:pointer;transition:all .18s;white-space:nowrap;
 }
 .tab:hover{color:var(--ink)}
-.tab.active{background:var(--ink);color:var(--surface);box-shadow:var(--shadow-sm)}
+.tab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(191,57,52,.3)}
 .panel{display:none}.panel.active{display:block}
 
 /* ── LOADING / ERROR ────────────────────────────────────────────────────── */
@@ -171,9 +173,9 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
   max-width:100%;line-height:1.2;
 }
 .cal-summary{
-  font-size:8.5px;color:var(--muted);line-height:1.4;
+  font-size:9.5px;color:var(--muted);font-weight:500;line-height:1.35;
   overflow:hidden;display:-webkit-box;
-  -webkit-line-clamp:3;-webkit-box-orient:vertical;
+  -webkit-line-clamp:2;-webkit-box-orient:vertical;
   text-align:left;max-width:100%;margin-top:3px;
 }
 .cal-cell-top{display:flex;justify-content:space-between;align-items:flex-start;width:100%;margin-bottom:2px}
@@ -208,7 +210,7 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
   cursor:pointer;transition:all .18s;
 }
 .hv-btn:hover{color:var(--ink)}
-.hv-btn.active{background:var(--ink);color:var(--surface);box-shadow:var(--shadow-sm)}
+.hv-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(191,57,52,.3)}
 .multi-day-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:start}
 .multi-day-col{
   background:var(--surface);border:1px solid var(--border);
@@ -244,7 +246,7 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
   transition:all .15s;white-space:nowrap;flex-shrink:0;box-shadow:var(--shadow-sm);
 }
 .day-btn:hover{color:var(--ink);border-color:var(--border-m)}
-.day-btn.active{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.day-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .hourly-panel{display:none}.hourly-panel.active{display:block}
 .hourly-header{
   display:grid;grid-template-columns:100px 1fr;
@@ -292,36 +294,39 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 .tl-map:hover{text-decoration:underline}
 
 /* ── HOTELS ─────────────────────────────────────────────────────────────── */
+.hotels-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:700px){.hotels-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:420px){.hotels-grid{grid-template-columns:1fr}}
 .hotel-card{
   background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);overflow:hidden;margin-bottom:12px;
+  border-radius:var(--r);overflow:hidden;
   box-shadow:var(--shadow-sm);transition:transform .18s,box-shadow .18s;
 }
 .hotel-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
-.hotel-img{width:100%;height:200px;object-fit:cover;display:block}
+.hotel-img{width:100%;height:160px;object-fit:cover;display:block}
 .hotel-img-placeholder{
-  width:100%;height:200px;background:var(--raised);
+  width:100%;height:160px;background:var(--raised);
   display:flex;align-items:center;justify-content:center;
-  font-size:52px;border-bottom:1px solid var(--border);
+  font-size:40px;border-bottom:1px solid var(--border);
 }
-.hotel-body{padding:18px 20px}
-.hotel-name{font-family:var(--serif);font-size:20px;font-weight:500;line-height:1.3;margin-bottom:4px}
-.hotel-stars{color:#E8A020;font-size:14px;letter-spacing:1px;margin-bottom:8px}
-.hotel-meta{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6}
-.hotel-price-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.hotel-body{padding:12px 14px}
+.hotel-name{font-family:var(--serif);font-size:15px;font-weight:500;line-height:1.3;margin-bottom:3px}
+.hotel-stars{color:#D4920A;font-size:12px;letter-spacing:1px;margin-bottom:6px}
+.hotel-meta{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.5}
+.hotel-price-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
 .hotel-price-badge{
-  font-size:13px;font-weight:700;
+  font-size:11px;font-weight:700;
   background:var(--green-bg);color:var(--green-txt);
-  padding:5px 11px;border-radius:7px;border:1px solid var(--green-bd);
+  padding:3px 8px;border-radius:5px;border:1px solid var(--green-bd);
 }
-.hotel-price-total{font-size:12px;color:var(--muted);font-weight:500}
+.hotel-price-total{font-size:11px;color:var(--muted);font-weight:500}
 .hotel-notes{
-  font-size:12px;color:var(--muted);line-height:1.65;
-  margin-bottom:12px;padding:10px 12px;
+  font-size:11px;color:var(--muted);line-height:1.6;
+  margin-bottom:8px;padding:8px 10px;
   background:var(--raised);border-radius:var(--rs);
   border:1px solid var(--border);
 }
-.hotel-map-link{font-size:12px;color:var(--blue-txt);text-decoration:none;font-weight:600}
+.hotel-map-link{font-size:11px;color:var(--accent);text-decoration:none;font-weight:600}
 .hotel-map-link:hover{text-decoration:underline}
 
 /* ── TIPS ───────────────────────────────────────────────────────────────── */
@@ -367,7 +372,7 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 
   <div class="tabs">
     <button class="tab active" onclick="switchTab('summary',this)">Summary</button>
-    <button class="tab" onclick="switchTab('hourly',this)">Hour by hour</button>
+    <button class="tab" onclick="switchTab('hourly',this)">Daily</button>
     <button class="tab" onclick="switchTab('hotels',this)">Hotels</button>
     <button class="tab" onclick="switchTab('tips',this)">Tips</button>
   </div>
@@ -454,23 +459,40 @@ function loadingHTML(){
 function tryParseDate(str){
   if(!str) return null;
   const s = str.trim();
+  let d;
+
   // gviz "Date(YYYY,M,D)" format
   const gv = s.match(/^Date\((\d+),(\d+),(\d+)\)/);
   if(gv) return new Date(+gv[1], +gv[2], +gv[3]);
-  // ISO timestamp — normalise to local midnight using UTC components to avoid day-shift
-  if(s.includes('T') || (s.includes('-') && s.length > 10)){
-    const d = new Date(s);
+
+  // ISO timestamp with T — always normalise via UTC to avoid timezone day-shift
+  if(s.match(/^\d{4}-\d{2}-\d{2}T/)){
+    d = new Date(s);
     if(!isNaN(d.getTime())) return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
   }
-  let d = new Date(s);
+
+  // YYYY-MM-DD
+  const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(iso) return new Date(+iso[1], +iso[2]-1, +iso[3]);
+
+  // M/D/YYYY or D/M/YYYY
+  const sl4 = s.match(/^(\d{1,2})[\/](\d{1,2})[\/](\d{4})$/);
+  if(sl4){ d = new Date(+sl4[3], +sl4[1]-1, +sl4[2]); if(!isNaN(d.getTime())) return d; }
+
+  // Text month "May 14" etc — append year
+  d = new Date(s + ', 2026');
   if(!isNaN(d.getTime())) return d;
   d = new Date(s + ' 2026');
   if(!isNaN(d.getTime())) return d;
-  d = new Date(s + ', 2026');
-  if(!isNaN(d.getTime())) return d;
-  // DD/MM/YYYY
-  const dmy = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-  if(dmy){ d = new Date(+dmy[3], +dmy[2]-1, +dmy[1]); if(!isNaN(d.getTime())) return d; }
+
+  // Last resort — bare parse, but only accept reasonable years
+  d = new Date(s);
+  if(!isNaN(d.getTime()) && d.getFullYear() >= 2020 && d.getFullYear() <= 2035) return d;
+
+  // If we got a date but year is wrong (e.g. 2-digit year parsed as 1926/2001),
+  // keep the month/day and force 2026
+  if(!isNaN(d.getTime())) return new Date(2026, d.getMonth(), d.getDate());
+
   return null;
 }
 function dateKey(d){ return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
@@ -531,15 +553,16 @@ function renderCalMonth(yr, mo, dateMap){
       const {d,i} = entry;
       const flag  = d.flag||'ok';
       const tag   = cityTag(d.location);
-      const summary = [d.highlight_1,d.highlight_2,d.highlight_3,d.highlight_4]
-        .filter(Boolean).map(h=>h.split('—')[0].trim()).join(' · ');
+      const area  = (d.location||'').includes('—')
+        ? d.location.split('—')[1].trim()
+        : (d.location||'').split(/[→·]/)[0].trim();
       cells += `<div class="cal-cell trip-day flag-${flag}" onclick="openDay(${i})" title="${d.location}">
         <div class="cal-cell-top">
           <span class="cal-day-num">${day}</span>
           <span class="cal-city-tag ${tag.cls}">${tag.label}</span>
         </div>
         <span class="cal-emoji">${d.emoji||'📅'}</span>
-        <span class="cal-summary">${summary}</span>
+        <span class="cal-summary">${area}</span>
       </div>`;
     } else {
       cells += `<div class="cal-cell"><span class="cal-day-num">${day}</span></div>`;
@@ -682,7 +705,7 @@ function renderHotels(hotels){
     return `<p class="empty-state">No hotels found. Add a tab named <strong>hotels</strong> with columns:<br>
       <code>hotel_name, city, check_in, check_out, nights, price_per_night, total_price, stars, image_url, map_query, notes</code></p>`;
 
-  return hotels.map(h=>{
+  return `<div class="hotels-grid">${hotels.map(h=>{
     const stars = parseInt(h.stars)||0;
     const starStr = stars ? '★'.repeat(Math.min(stars,5))+'☆'.repeat(Math.max(0,5-stars)) : '';
     const imgHtml = h.image_url
@@ -705,7 +728,7 @@ function renderHotels(hotels){
         <a class="hotel-map-link" href="${gm(mapQuery)}" target="_blank">Open in Maps →</a>
       </div>
     </div>`;
-  }).join('');
+  }).join('')}</div>`;
 }
 
 // ── RENDER TIPS ───────────────────────────────────────────────────────────────
