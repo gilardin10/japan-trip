@@ -45,7 +45,7 @@
 
 /* ── BASE ───────────────────────────────────────────────────────────────── */
 body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-height:100vh;-webkit-font-smoothing:antialiased}
-.page{max-width:700px;margin:0 auto;padding:0 16px 4rem}
+.page{max-width:900px;margin:0 auto;padding:0 16px 4rem}
 
 /* ── HEADER ─────────────────────────────────────────────────────────────── */
 .site-header{
@@ -141,8 +141,8 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
   text-transform:uppercase;letter-spacing:.5px;
 }
 .cal-cell{
-  min-height:76px;border-radius:var(--rm);
-  padding:7px 6px 5px;
+  min-height:100px;border-radius:var(--rm);
+  padding:7px 6px 6px;
   display:flex;flex-direction:column;
   align-items:center;text-align:center;
 }
@@ -164,16 +164,36 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 .cal-cell.flag-key {border-top:3px solid var(--pink-txt)}
 .cal-day-num{font-size:10px;font-weight:700;color:var(--hint);align-self:flex-start;line-height:1}
 .cal-cell.trip-day .cal-day-num{color:var(--muted)}
-.cal-emoji{font-size:22px;margin:3px 0 3px;line-height:1.1;display:block}
+.cal-emoji{font-size:24px;margin:4px 0 3px;line-height:1.1;display:block}
 .cal-loc{
   font-size:9px;color:var(--muted);font-weight:500;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   max-width:100%;line-height:1.2;
 }
+.cal-hl{
+  font-size:8.5px;color:var(--muted);line-height:1.35;
+  overflow:hidden;display:-webkit-box;
+  -webkit-line-clamp:3;-webkit-box-orient:vertical;
+  text-align:center;max-width:100%;margin-top:2px;
+}
+.cal-controls{display:flex;justify-content:flex-end;margin-bottom:1rem}
+.cal-toggle{
+  display:flex;gap:2px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--rm);
+  padding:3px;box-shadow:var(--shadow-sm);
+}
+.cal-toggle-btn{
+  font-family:var(--sans);font-size:12px;font-weight:500;
+  padding:5px 14px;border-radius:7px;border:none;
+  background:transparent;color:var(--muted);
+  cursor:pointer;transition:all .18s;
+}
+.cal-toggle-btn:hover{color:var(--ink)}
+.cal-toggle-btn.active{background:var(--ink);color:var(--surface);box-shadow:var(--shadow-sm)}
 @media(max-width:500px){
-  .cal-cell{min-height:60px;padding:5px 3px 3px}
+  .cal-cell{min-height:70px;padding:5px 3px 3px}
   .cal-emoji{font-size:18px;margin:2px 0}
-  .cal-loc{display:none}
+  .cal-loc,.cal-hl{display:none}
   .tab{padding:7px 12px}
 }
 
@@ -327,7 +347,7 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 
 <script>
 // ── CONFIG ───────────────────────────────────────────────────────────────────
-const SHEET_TABS = { days:'days', schedule:'schedule', hotels:'hotels', tips:'tips' };
+const SHEET_TABS = { days:'Days', schedule:'Schedule', hotels:'Hotels', tips:'Tips' };
 const LS_KEY = 'jp2026_sheet_id';
 let SHEET_ID = localStorage.getItem(LS_KEY) || '';
 
@@ -400,12 +420,23 @@ function loadingHTML(){
 function tryParseDate(str){
   if(!str) return null;
   const s = str.trim();
+  // gviz "Date(YYYY,M,D)" format
+  const gv = s.match(/^Date\((\d+),(\d+),(\d+)\)/);
+  if(gv) return new Date(+gv[1], +gv[2], +gv[3]);
+  // ISO timestamp — normalise to local midnight using UTC components to avoid day-shift
+  if(s.includes('T') || (s.includes('-') && s.length > 10)){
+    const d = new Date(s);
+    if(!isNaN(d.getTime())) return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  }
   let d = new Date(s);
   if(!isNaN(d.getTime())) return d;
   d = new Date(s + ' 2026');
   if(!isNaN(d.getTime())) return d;
   d = new Date(s + ', 2026');
   if(!isNaN(d.getTime())) return d;
+  // DD/MM/YYYY
+  const dmy = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if(dmy){ d = new Date(+dmy[3], +dmy[2]-1, +dmy[1]); if(!isNaN(d.getTime())) return d; }
   return null;
 }
 function dateKey(d){ return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
@@ -414,6 +445,16 @@ function dateKey(d){ return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 const MONTH_NAMES = ['January','February','March','April','May','June',
                      'July','August','September','October','November','December'];
 const DOW_SHORT   = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+let calView = 'places'; // 'places' | 'highlights'
+
+function setCalView(view){
+  calView = view;
+  document.querySelectorAll('.cal-toggle-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.cal-toggle-btn[data-view="${view}"]`).classList.add('active');
+  document.querySelectorAll('.cal-places').forEach(el=>el.style.display = view==='places' ? '' : 'none');
+  document.querySelectorAll('.cal-highlights').forEach(el=>el.style.display = view==='highlights' ? '' : 'none');
+}
 
 function renderCalendar(days){
   const dateMap = {};
@@ -429,20 +470,26 @@ function renderCalendar(days){
   const minD = new Date(Math.min(...allParsed.map(d=>d.getTime())));
   const maxD = new Date(Math.max(...allParsed.map(d=>d.getTime())));
 
-  let html = '';
+  let months = '';
   let yr = minD.getFullYear(), mo = minD.getMonth();
   const endYr = maxD.getFullYear(), endMo = maxD.getMonth();
   while(yr < endYr || (yr===endYr && mo<=endMo)){
-    html += renderCalMonth(yr, mo, dateMap);
+    months += renderCalMonth(yr, mo, dateMap);
     mo++; if(mo>11){mo=0;yr++;}
   }
-  return html;
+
+  return `<div class="cal-controls">
+    <div class="cal-toggle">
+      <button class="cal-toggle-btn active" data-view="places" onclick="setCalView('places')">Places</button>
+      <button class="cal-toggle-btn" data-view="highlights" onclick="setCalView('highlights')">Highlights</button>
+    </div>
+  </div>${months}`;
 }
 
 function renderCalMonth(yr, mo, dateMap){
   const daysInMonth = new Date(yr, mo+1, 0).getDate();
-  let startDow = new Date(yr, mo, 1).getDay(); // 0=Sun
-  startDow = startDow===0 ? 6 : startDow-1;   // shift to Mon=0
+  let startDow = new Date(yr, mo, 1).getDay();
+  startDow = startDow===0 ? 6 : startDow-1;
 
   const headers = DOW_SHORT.map(d=>`<div class="cal-dow">${d}</div>`).join('');
   let cells = '';
@@ -455,11 +502,18 @@ function renderCalMonth(yr, mo, dateMap){
     if(entry){
       const {d,i} = entry;
       const flag = d.flag||'ok';
-      const loc  = (d.location||'').split(/[\s\-·]/)[0].slice(0,9);
-      cells += `<div class="cal-cell trip-day flag-${flag}" onclick="openDay(${i})" title="${d.location} — click for schedule">
+      const loc  = (d.location||'').split(/[\s\-·,]/)[0].slice(0,10);
+      const hls  = [d.highlight_1,d.highlight_2,d.highlight_3].filter(Boolean).map(h=>h.split('—')[0].trim()).join(' · ');
+      cells += `<div class="cal-cell trip-day flag-${flag}" onclick="openDay(${i})" title="${d.location}">
         <span class="cal-day-num">${day}</span>
-        <span class="cal-emoji">${d.emoji||'📅'}</span>
-        <span class="cal-loc">${loc}</span>
+        <div class="cal-places">
+          <span class="cal-emoji">${d.emoji||'📅'}</span>
+          <span class="cal-loc">${loc}</span>
+        </div>
+        <div class="cal-highlights" style="display:none">
+          <span class="cal-emoji">${d.emoji||'📅'}</span>
+          <span class="cal-hl">${hls}</span>
+        </div>
       </div>`;
     } else {
       cells += `<div class="cal-cell"><span class="cal-day-num">${day}</span></div>`;
