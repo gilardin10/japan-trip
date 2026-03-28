@@ -284,7 +284,7 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 }
 .tl-body{display:flex;gap:10px;align-items:flex-start}
 .tl-thumb{
-  width:52px;height:52px;border-radius:8px;
+  display:block;width:52px;height:52px;border-radius:8px;
   object-fit:cover;flex-shrink:0;
   border:1px solid var(--border);
 }
@@ -986,7 +986,7 @@ function renderHourly(days, schedule){
       if(s.tag_nap==='yes')      tags.push(`<span class="tl-tag t-nap">nap time</span>`);
       const imgSrc = s.image_url || ACTIVITY_IMAGES[s.map_query] || '';
       const thumb = imgSrc
-        ? `<img class="tl-thumb" src="${imgSrc}" alt="${s.name}" loading="lazy" onerror="this.style.display='none'">`
+        ? `<img class="tl-thumb" src="${imgSrc}" alt="${s.name}" onerror="this.style.display='none'">`
         : '';
       return `<div class="tl-item">
         <div class="tl-time">${s.time}</div>
