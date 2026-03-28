@@ -563,11 +563,10 @@ function initLeafletMap(){
   _leafletMap = L.map('leaflet-map', {zoomControl:true, scrollWheelZoom:false})
     .setView(CITY_ZOOM.all[0], CITY_ZOOM.all[1]);
 
-  // CartoDB Voyager: English labels, Google Maps–like color palette, free
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
-    attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains:'abcd',
-    maxZoom:20
+  // Esri World Street Map: English labels everywhere (incl. Japan), Google Maps–like style, free
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{
+    attribution:'Tiles © <a href="https://www.esri.com/">Esri</a>',
+    maxZoom:19
   }).addTo(_leafletMap);
 
   _cityLayers = {};
