@@ -6,7 +6,6 @@
 <title>Japan · May 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
 /* ── RESET & TOKENS ─────────────────────────────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
@@ -156,6 +155,7 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 .tdc:hover{border-color:var(--border-m);transform:translateY(-1px)}
 .tdc-top{display:flex;justify-content:space-between;align-items:flex-start;line-height:1}
 .tdc-num{font-size:22px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-1px}
+.tdc-dow{font-size:10px;font-weight:500;color:var(--muted);vertical-align:middle;letter-spacing:.2px}
 .tdc-city{font-size:9px;font-weight:600;color:var(--hint);text-transform:uppercase;letter-spacing:.6px;margin-top:4px}
 .tdc-icon{font-size:26px;line-height:1;margin:4px 0 2px}
 .tdc-area{
@@ -251,26 +251,12 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 
 /* ── TIMELINE ────────────────────────────────────────────────────────────── */
 .tl-list{position:relative}
-/* Vertical connecting line */
-.tl-list::before{
-  content:'';position:absolute;
-  left:43px;top:22px;bottom:22px;
-  width:1px;background:var(--border);
-  z-index:0;
-}
 .tl-item{
   display:grid;grid-template-columns:56px 1fr;
   gap:16px;padding:14px 0;
-  position:relative;
+  border-bottom:1px solid var(--border);
 }
-/* Dot on the timeline line */
-.tl-item::after{
-  content:'';position:absolute;
-  left:40px;top:18px;
-  width:7px;height:7px;border-radius:50%;
-  background:var(--surface);border:2px solid var(--border-m);
-  z-index:1;
-}
+.tl-item:last-child{border-bottom:none}
 .tl-time{
   font-size:10px;color:var(--hint);
   padding-top:2px;padding-right:4px;
@@ -347,39 +333,31 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 .tip-name{font-weight:600;margin-bottom:2px}
 .tip-detail{color:var(--muted);line-height:1.55;font-size:12px}
 
-/* ── MAP ────────────────────────────────────────────────────────────────── */
-.map-toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
-.map-city-btn{
-  font-family:var(--sans);font-size:12px;font-weight:600;
-  padding:5px 14px;border-radius:20px;border:1px solid transparent;
+/* ── SUMMARY MAP ─────────────────────────────────────────────────────────── */
+.summary-map-section{margin-top:1.75rem}
+.summary-map-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:10px;gap:8px;flex-wrap:wrap;
+}
+.summary-map-title{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.map-filters{display:flex;gap:4px;flex-wrap:wrap}
+.mf-btn{
+  font-family:var(--sans);font-size:11px;font-weight:500;
+  padding:4px 11px;border-radius:5px;
+  border:1px solid var(--border);background:transparent;color:var(--muted);
   cursor:pointer;transition:all .15s;
 }
-.map-city-btn.all{background:var(--ink);color:var(--surface);border-color:var(--ink)}
-.map-city-btn.inactive{background:var(--surface);color:var(--muted);border-color:var(--border-m)}
-.map-city-btn.inactive:hover{border-color:var(--ink);color:var(--ink)}
-.map-city-btn[data-city="tokyo"]  .mc-dot{background:#DC2626}
-.map-city-btn[data-city="hakone"] .mc-dot{background:#92400E}
-.map-city-btn[data-city="kyoto"]  .mc-dot{background:#B45309}
-.map-city-btn[data-city="nara"]   .mc-dot{background:#15803D}
-.map-city-btn[data-city="osaka"]  .mc-dot{background:#1D4ED8}
-.mc-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle}
-#trip-map{
-  height:520px;border-radius:var(--r);
-  border:1px solid var(--border);box-shadow:var(--shadow-md);
-  overflow:hidden;
+.mf-btn:hover{border-color:var(--border-m);color:var(--ink)}
+.mf-btn.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.gmap-frame{
+  width:100%;height:460px;border-radius:12px;
+  border:1px solid var(--border);overflow:hidden;display:block;
 }
-.map-legend{
-  display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;
-  font-size:11px;color:var(--muted);
+.gmap-note{
+  font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6;
 }
-.map-legend-item{display:flex;align-items:center;gap:5px}
-.map-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-/* Leaflet popup override */
-.leaflet-popup-content-wrapper{border-radius:var(--rm);box-shadow:var(--shadow-md)}
-.leaflet-popup-content{font-family:var(--sans);font-size:13px;margin:10px 14px;line-height:1.5}
-.popup-name{font-weight:600;margin-bottom:2px}
-.popup-detail{font-size:12px;color:#666;margin-bottom:4px}
-.popup-city{font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;display:inline-block}
+.gmap-note a{color:var(--blue-txt);text-decoration:none}
+.gmap-note a:hover{text-decoration:underline}
 
 /* ── BUDGET ─────────────────────────────────────────────────────────────── */
 .budget-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
@@ -462,7 +440,6 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
     <button class="tab" onclick="switchTab('hourly',this)">Daily</button>
     <button class="tab" onclick="switchTab('hotels',this)">Hotels</button>
     <button class="tab" onclick="switchTab('tips',this)">Tips</button>
-    <button class="tab" onclick="switchTab('map',this)">Map</button>
     <button class="tab" onclick="switchTab('budget',this)">Budget</button>
   </div>
 
@@ -470,12 +447,10 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
   <div class="panel" id="panel-hourly"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
   <div class="panel" id="panel-hotels"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
   <div class="panel" id="panel-tips"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
-  <div class="panel" id="panel-map"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
   <div class="panel" id="panel-budget"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
 
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // ── CONFIG ───────────────────────────────────────────────────────────────────
 const SHEET_TABS = { days:'Days', schedule:'Schedule', hotels:'Hotels', tips:'Tips', budget:'Budget' };
@@ -510,7 +485,53 @@ const ACTIVITY_IMAGES = {
   'Kura Sushi Asakusa Tokyo':           'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Kura_Sushi_conveyor_belt.jpg/480px-Kura_Sushi_conveyor_belt.jpg',
 };
 
-// ── HARDCODED COORDINATES (map_query → [lat, lng, city]) ─────────────────────
+// ── GOOGLE MAPS EMBED VIEWS (per city) ───────────────────────────────────────
+const MAP_VIEWS = {
+  all:    'https://maps.google.com/maps?output=embed&q=Japan&z=6',
+  tokyo:  'https://maps.google.com/maps?output=embed&q=Asakusa+Tokyo+Japan&z=13',
+  hakone: 'https://maps.google.com/maps?output=embed&q=Hakone+Kanagawa+Japan&z=12',
+  kyoto:  'https://maps.google.com/maps?output=embed&q=Kyoto+Japan&z=13',
+  nara:   'https://maps.google.com/maps?output=embed&q=Nara+Park+Japan&z=13',
+  osaka:  'https://maps.google.com/maps?output=embed&q=Dotonbori+Osaka+Japan&z=13',
+};
+// Set this to your Google My Maps embed URL to show all custom pins:
+// Go to maps.google.com/maps/d → create map → share → embed on website → copy src URL
+let MY_MAPS_URL = '';
+
+function renderSummaryMap(){
+  const filters = [
+    {key:'all',   label:'All'},
+    {key:'tokyo', label:'Tokyo'},
+    {key:'hakone',label:'Hakone'},
+    {key:'kyoto', label:'Kyoto'},
+    {key:'nara',  label:'Nara'},
+    {key:'osaka', label:'Osaka'},
+  ];
+  const btns = filters.map(f=>
+    `<button class="mf-btn${f.key==='all'?' active':''}" onclick="switchMapView('${f.key}',this)">${f.label}</button>`
+  ).join('');
+  const src = MY_MAPS_URL || MAP_VIEWS.all;
+  return `<div class="summary-map-section">
+    <div class="summary-map-header">
+      <span class="summary-map-title">Places</span>
+      <div class="map-filters">${btns}</div>
+    </div>
+    <iframe id="gmap-frame" class="gmap-frame" src="${src}" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <div class="gmap-note">
+      To show all trip pins: <a href="https://mymaps.google.com" target="_blank">create a Google My Maps</a>,
+      add your places, click Share → Embed on my site, then paste the <code>src</code> URL into
+      <code>MY_MAPS_URL</code> at the top of index.html.
+    </div>
+  </div>`;
+}
+function switchMapView(key, btn){
+  document.querySelectorAll('.mf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const frame = document.getElementById('gmap-frame');
+  if(frame) frame.src = MY_MAPS_URL && key==='all' ? MY_MAPS_URL : MAP_VIEWS[key]||MAP_VIEWS.all;
+}
+
+// ── HARDCODED COORDINATES (kept for reference / future use) ──────────────────
 const COORDS = {
   'MIMARU Tokyo Asakusa Station':       [35.7140, 139.7993, 'tokyo'],
   'Sumida River Tokyo':                 [35.7160, 139.7985, 'tokyo'],
@@ -691,16 +712,20 @@ function renderCalendar(days){
   if(!days.length)
     return `<p class="empty-state">No trip days found. Check your Days sheet.</p>`;
 
+  const DOW_ABBR = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
   const cards = days.map((d,i)=>{
     const parsed = tryParseDate(d.date);
     const dayNum = parsed ? parsed.getDate() : '?';
+    const dowStr = d.dow
+      ? d.dow.slice(0,3).toUpperCase()
+      : (parsed ? DOW_ABBR[parsed.getDay()] : '');
     const tag    = cityTag(d.location);
     const area   = (d.location||'').includes('—')
       ? d.location.split('—')[1].trim()
       : (d.location||'').split(/[→·]/)[0].trim();
     return `<div class="tdc" style="border-top-color:${tag.accent}" onclick="openDay(${i})" title="${d.location||''}">
       <div class="tdc-top">
-        <span class="tdc-num">${dayNum}</span>
+        <div><span class="tdc-num">${dayNum}</span> <span class="tdc-dow">${dowStr}</span></div>
         <span class="tdc-city">${tag.label}</span>
       </div>
       <div class="tdc-icon">${d.emoji||'📅'}</div>
@@ -884,110 +909,8 @@ function renderTips(tips){
   </div>`).join('');
 }
 
-// ── RENDER MAP ────────────────────────────────────────────────────────────────
-const CITY_COLORS = {
-  tokyo:  { hex:'#DC2626', light:'#FEE2E2', dark:'#991B1B', label:'Tokyo'  },
-  hakone: { hex:'#92400E', light:'#F3E8D8', dark:'#7C4A1E', label:'Hakone' },
-  kyoto:  { hex:'#B45309', light:'#FEF9C3', dark:'#854D0E', label:'Kyoto'  },
-  nara:   { hex:'#15803D', light:'#DCFCE7', dark:'#166534', label:'Nara'   },
-  osaka:  { hex:'#1D4ED8', light:'#DBEAFE', dark:'#1E3A8A', label:'Osaka'  },
-};
-let _leafletMap = null;
-let _mapMarkers = [];
-let _activeCity = 'all';
 let _scheduleForMap = [];
 
-function initMap(schedule){
-  _scheduleForMap = schedule;
-  const panel = document.getElementById('panel-map');
-
-  // City filter buttons
-  const cityBtns = Object.entries(CITY_COLORS).map(([city,c])=>
-    `<button class="map-city-btn inactive" data-city="${city}" onclick="filterMap('${city}')">
-      <span class="mc-dot" style="background:${c.hex}"></span>${c.label}
-    </button>`
-  ).join('');
-
-  panel.innerHTML = `
-    <div class="map-toolbar">
-      <button class="map-city-btn all" onclick="filterMap('all')">All cities</button>
-      ${cityBtns}
-    </div>
-    <div id="trip-map"></div>
-    <div class="map-legend">
-      ${Object.entries(CITY_COLORS).map(([city,c])=>
-        `<div class="map-legend-item">
-          <div class="map-legend-dot" style="background:${c.hex}"></div>
-          <span>${c.label}</span>
-        </div>`
-      ).join('')}
-    </div>`;
-
-  // Initialise Leaflet
-  if(_leafletMap){ _leafletMap.remove(); _leafletMap=null; }
-  _leafletMap = L.map('trip-map').setView([35.5, 137.5], 7);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    maxZoom:18,
-    attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  }).addTo(_leafletMap);
-
-  _mapMarkers = [];
-  const seen = new Set();
-  schedule.forEach(s=>{
-    const c = COORDS[s.map_query];
-    if(!c || seen.has(s.map_query)) return;
-    seen.add(s.map_query);
-    const col = CITY_COLORS[c[2]] || CITY_COLORS.tokyo;
-    const icon = L.divIcon({
-      className:'',
-      html:`<div style="width:14px;height:14px;border-radius:50%;background:${col.hex};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>`,
-      iconSize:[14,14],iconAnchor:[7,7]
-    });
-    const m = L.marker([c[0],c[1]],{icon}).addTo(_leafletMap);
-    const thumb = ACTIVITY_IMAGES[s.map_query]
-      ? `<img src="${ACTIVITY_IMAGES[s.map_query]}" style="width:100%;height:80px;object-fit:cover;border-radius:5px;margin-bottom:6px;display:block" onerror="this.style.display='none'">`
-      : '';
-    m.bindPopup(`${thumb}<div class="popup-name">${s.name}</div>
-      <div class="popup-detail">${s.detail}</div>
-      <span class="popup-city" style="background:${col.light};color:${col.dark}">${col.label}</span>
-      ${s.map_query?`<br><a href="https://www.google.com/maps/search/${encodeURIComponent(s.map_query)}" target="_blank" style="font-size:11px;color:#1660A8;font-weight:500">Open in Maps →</a>`:''}`);
-    m._city = c[2];
-    _mapMarkers.push(m);
-  });
-  filterMap('all');
-}
-
-function filterMap(city){
-  _activeCity = city;
-  // Update button styles
-  document.querySelectorAll('.map-city-btn').forEach(b=>{
-    const bc = b.dataset.city || 'all';
-    const isActive = city==='all' ? bc==='all' : bc===city;
-    if(bc==='all'){
-      b.style.background = city==='all' ? 'var(--ink)' : 'var(--surface)';
-      b.style.color = city==='all' ? 'var(--surface)' : 'var(--muted)';
-      b.style.borderColor = city==='all' ? 'var(--ink)' : 'var(--border-m)';
-    } else {
-      const col = CITY_COLORS[bc];
-      if(isActive){ b.style.background=col.light; b.style.color=col.dark; b.style.borderColor=col.hex; }
-      else { b.style.background='var(--surface)'; b.style.color='var(--muted)'; b.style.borderColor='var(--border-m)'; }
-    }
-  });
-  // Show/hide markers
-  _mapMarkers.forEach(m=>{
-    const visible = city==='all' || m._city===city;
-    if(visible){ if(!_leafletMap.hasLayer(m)) m.addTo(_leafletMap); }
-    else { if(_leafletMap.hasLayer(m)) _leafletMap.removeLayer(m); }
-  });
-  // Fit bounds to visible markers
-  const visible = _mapMarkers.filter(m=>_leafletMap.hasLayer(m));
-  if(visible.length>1){
-    const bounds = L.latLngBounds(visible.map(m=>m.getLatLng()));
-    _leafletMap.fitBounds(bounds,{padding:[30,30]});
-  } else if(visible.length===1){
-    _leafletMap.setView(visible[0].getLatLng(),13);
-  }
-}
 
 // ── RENDER BUDGET ─────────────────────────────────────────────────────────────
 function renderBudget(items){
@@ -997,12 +920,11 @@ function renderBudget(items){
 
   // Parse numbers: strip currency symbols, commas
   function parseMoney(v){ return parseFloat((v||'0').replace(/[^0-9.]/g,''))||0; }
-  function fmt(n){ return n===0?'—':'¥'+Math.round(n).toLocaleString(); }
+  function fmtJPY(n){ return n===0?'—':'¥'+Math.round(n).toLocaleString('en'); }
+  function fmtPLN(n){ return n===0?'—': Math.round(n).toLocaleString('en')+' zł'; }
 
-  const totalPlanned = items.reduce((s,i)=>s+parseMoney(i.planned),0);
-  const totalActual  = items.reduce((s,i)=>s+parseMoney(i.actual),0);
-  const remaining    = totalPlanned - totalActual;
-  const pct          = totalPlanned>0 ? Math.min(100,(totalActual/totalPlanned)*100) : 0;
+  const totalJPY = items.reduce((s,i)=>s+parseMoney(i.yen),0);
+  const totalPLN = items.reduce((s,i)=>s+parseMoney(i.pln),0);
 
   // Group by category
   const catOrder=[], catMap={};
@@ -1013,17 +935,16 @@ function renderBudget(items){
   });
 
   const catBars = catOrder.map(cat=>{
-    const rows = catMap[cat];
-    const cp = rows.reduce((s,i)=>s+parseMoney(i.planned),0);
-    const ca = rows.reduce((s,i)=>s+parseMoney(i.actual),0);
-    const pp = cp>0?Math.min(100,(ca/cp)*100):0;
-    const barCls = pp>100?'bcat-bar-over':pp>80?'bcat-bar-warn':'bcat-bar-ok';
+    const rows  = catMap[cat];
+    const cjpy  = rows.reduce((s,i)=>s+parseMoney(i.yen),0);
+    const cpln  = rows.reduce((s,i)=>s+parseMoney(i.pln),0);
+    const pct   = totalJPY>0?Math.min(100,(cjpy/totalJPY)*100):0;
     return `<div class="budget-cat-row">
       <div class="bcat-header">
         <span class="bcat-name">${cat}</span>
-        <span class="bcat-amounts">${fmt(ca)} / ${fmt(cp)}</span>
+        <span class="bcat-amounts">${fmtJPY(cjpy)} · ${fmtPLN(cpln)}</span>
       </div>
-      <div class="bcat-bar-track"><div class="bcat-bar-fill ${barCls}" style="width:${pp}%"></div></div>
+      <div class="bcat-bar-track"><div class="bcat-bar-fill bcat-bar-ok" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
 
@@ -1033,35 +954,33 @@ function renderBudget(items){
   catOrder.forEach((c,i)=>catColorMap[c]=catColors[i%catColors.length]);
 
   const tableRows = items.map(it=>{
-    const p = parseMoney(it.planned), a = parseMoney(it.actual);
-    const isOver = a>p && p>0;
+    const jpy = parseMoney(it.yen);
+    const pln = parseMoney(it.pln);
     const col = catColorMap[it.category||'Other'];
     return `<tr>
       <td><span class="bt-cat-badge" style="background:var(${col}-bg);color:var(${col}-txt);border:1px solid var(${col}-bd)">${it.category||'Other'}</span></td>
       <td>${it.item||''}<div class="bt-notes">${it.notes||''}</div></td>
-      <td class="bt-planned">${fmt(p)}</td>
-      <td class="bt-actual${isOver?' over':''}">${fmt(a)}</td>
+      <td class="bt-planned">${fmtJPY(jpy)}</td>
+      <td class="bt-actual">${fmtPLN(pln)}</td>
     </tr>`;
   }).join('');
-
-  const remCls = remaining>=0?'bsc-under':'bsc-over';
 
   return `
     <div class="budget-summary-grid">
       <div class="budget-summary-card">
-        <div class="bsc-label">Total Budget</div>
-        <div class="bsc-value">${fmt(totalPlanned)}</div>
-        <div class="bsc-sub">${pct.toFixed(0)}% spent</div>
+        <div class="bsc-label">Total (JPY)</div>
+        <div class="bsc-value">${fmtJPY(totalJPY)}</div>
+        <div class="bsc-sub">${items.length} line items</div>
       </div>
       <div class="budget-summary-card">
-        <div class="bsc-label">Spent So Far</div>
-        <div class="bsc-value">${fmt(totalActual)}</div>
-        <div class="bsc-sub">${items.filter(i=>parseMoney(i.actual)>0).length} items logged</div>
+        <div class="bsc-label">Total (PLN)</div>
+        <div class="bsc-value">${fmtPLN(totalPLN)}</div>
+        <div class="bsc-sub">≈ ${(totalJPY/totalPLN||35).toFixed(0)} JPY per PLN</div>
       </div>
       <div class="budget-summary-card">
-        <div class="bsc-label">Remaining</div>
-        <div class="bsc-value ${remCls}">${fmt(Math.abs(remaining))}</div>
-        <div class="bsc-sub">${remaining>=0?'under budget':'over budget'}</div>
+        <div class="bsc-label">Categories</div>
+        <div class="bsc-value">${catOrder.length}</div>
+        <div class="bsc-sub">breakdown below</div>
       </div>
     </div>
     <div class="budget-section-title">By Category</div>
@@ -1069,7 +988,7 @@ function renderBudget(items){
     <div class="budget-section-title">All Items</div>
     <div class="budget-table-wrap">
       <table class="budget-table">
-        <thead><tr><th>Category</th><th>Item</th><th>Planned</th><th>Actual</th></tr></thead>
+        <thead><tr><th>Category</th><th>Item</th><th>Yen (¥)</th><th>Złoty (zł)</th></tr></thead>
         <tbody>${tableRows}</tbody>
       </table>
     </div>`;
@@ -1081,7 +1000,6 @@ function switchTab(id, el){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('panel-'+id).classList.add('active');
-  if(id==='map' && _scheduleForMap.length) initMap(_scheduleForMap);
 }
 function openDay(i){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -1110,7 +1028,7 @@ function selDay(i){
 // ── LOAD ALL DATA ─────────────────────────────────────────────────────────────
 async function loadAll(){
   if(!SHEET_ID){
-    ['summary','hourly','hotels','tips','map','budget'].forEach(id=>
+    ['summary','hourly','hotels','tips','budget'].forEach(id=>
       document.getElementById('panel-'+id).innerHTML =
         `<p class="empty-state">Paste your Google Sheet ID above to load your itinerary.</p>`
     );
@@ -1129,24 +1047,17 @@ async function loadAll(){
     try { budget = await fetchCSV(SHEET_TABS.budget); } catch(e){ budget = []; }
   } catch(e){
     const msg = `${e.message}. Check the Sheet ID and that it's published to the web.`;
-    ['summary','hourly','hotels','tips','map','budget'].forEach(id=>
+    ['summary','hourly','hotels','tips','budget'].forEach(id=>
       document.getElementById('panel-'+id).innerHTML = errorBanner(msg)
     );
     return;
   }
 
-  document.getElementById('panel-summary').innerHTML = renderCalendar(days);
+  document.getElementById('panel-summary').innerHTML = renderCalendar(days) + renderSummaryMap();
   document.getElementById('panel-hourly').innerHTML  = renderHourly(days, schedule);
   document.getElementById('panel-hotels').innerHTML  = renderHotels(hotels);
   document.getElementById('panel-tips').innerHTML    = renderTips(tips);
   document.getElementById('panel-budget').innerHTML  = renderBudget(budget);
-
-  // Store schedule for map (map is only rendered on first tab open)
-  _scheduleForMap = schedule;
-  document.getElementById('panel-map').innerHTML =
-    `<div style="color:var(--muted);font-size:13px;padding:2rem 0;text-align:center">
-      Click the <strong>Map</strong> tab to load the interactive map.
-    </div>`;
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
