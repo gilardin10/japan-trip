@@ -1148,8 +1148,11 @@ async function loadAll(){
       fetchCSV(SHEET_TABS.hotels),
       fetchCSV(SHEET_TABS.tips)
     ]);
-    // Budget tab is optional — don't fail the whole load if missing
-    try { budget = await fetchCSV(SHEET_TABS.budget); } catch(e){ budget = []; }
+    // Budget tab is optional — show error inline if it fails
+    try { budget = await fetchCSV(SHEET_TABS.budget); } catch(e){
+      budget = [];
+      document.getElementById('panel-budget').innerHTML = errorBanner(`Budget tab error: ${e.message}. Make sure the <strong>Budget</strong> sheet tab is published: <em>File → Share → Publish to web → Budget → CSV</em>.`);
+    }
   } catch(e){
     const msg = `${e.message}. Check the Sheet ID and that it's published to the web.`;
     ['summary','hourly','hotels','tips','budget'].forEach(id=>
