@@ -942,6 +942,21 @@ function splitCSV(line){
   return res;
 }
 
+// ── APPS SCRIPT FETCH (for Checklist — avoids gviz CSV publish requirement) ──
+async function fetchChecklistFromAppScript(){
+  const url = `${APPS_SCRIPT_URL}?token=Japan26&tab=Checklist&action=get_all`;
+  const r = await fetch(url, {redirect:'follow'});
+  if(!r.ok) throw new Error(`HTTP ${r.status}`);
+  const data = await r.json();
+  if(data.error) throw new Error(data.error);
+  // Normalize rows to consistent key shape
+  return (data.rows||[]).map(row=>({
+    Action: row.Action || row.action || '',
+    Date:   row.Date   || row.date   || '',
+    Status: row.Status || row.status || 'Pending',
+  }));
+}
+
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 function gm(q){ return 'https://www.google.com/maps/search/'+encodeURIComponent(q); }
 function imgErr(el){ el.onerror=null; el.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2252%22%20height%3D%2252%22%3E%3Crect%20width%3D%2252%22%20height%3D%2252%22%20rx%3D%228%22%20fill%3D%22%23e5e7eb%22%2F%3E%3Ctext%20x%3D%2226%22%20y%3D%2234%22%20text-anchor%3D%22middle%22%20font-size%3D%2220%22%20fill%3D%22%239ca3af%22%3E%F0%9F%93%8D%3C%2Ftext%3E%3C%2Fsvg%3E'; }
@@ -1543,7 +1558,7 @@ async function loadAll(){
       budget = [];
       document.getElementById('panel-budget').innerHTML = errorBanner(`Budget tab error: ${e.message}.`);
     }
-    try { checklist = await fetchCSV(SHEET_TABS.checklist); } catch(e){
+    try { checklist = await fetchChecklistFromAppScript(); } catch(e){
       checklist = [];
       document.getElementById('panel-checklist').innerHTML = errorBanner(`Checklist tab error: ${e.message}.`);
     }
