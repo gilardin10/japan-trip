@@ -413,6 +413,55 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 }
 .leaflet-popup-close-button:hover{color:#222!important}
 
+/* ── TRANSPORT CONNECTOR ─────────────────────────────────────────────────── */
+.tl-transport{
+  display:flex;align-items:center;gap:6px;
+  padding:3px 12px 3px 72px;
+  font-size:11px;color:var(--hint);font-weight:500;
+  user-select:none;
+}
+.tl-transport-icon{font-size:13px;flex-shrink:0}
+
+/* ── MEAL ROW ────────────────────────────────────────────────────────────── */
+.tl-meal{
+  background:var(--raised);
+  border-left:3px solid var(--tertiary-container);
+  border-radius:var(--rm);
+  margin:2px 0;
+}
+.tl-meal .tl-name{color:var(--tertiary)}
+
+/* ── CHECKLIST ───────────────────────────────────────────────────────────── */
+.checklist-wrap{display:flex;flex-direction:column;gap:16px}
+.checklist-group{
+  background:var(--surface);border:none;
+  border-radius:var(--r);overflow:hidden;
+}
+.checklist-group-header{
+  font-family:var(--serif);font-size:14px;font-weight:700;
+  padding:12px 20px;background:var(--surface-low);
+  letter-spacing:-.01em;
+}
+.checklist-item{
+  padding:12px 20px;
+  border-top:1px solid var(--border);
+  transition:background .15s;
+}
+.checklist-item:first-of-type{border-top:none}
+.checklist-item:hover{background:var(--surface-low)}
+.checklist-item.done .checklist-text{text-decoration:line-through;color:var(--hint)}
+.checklist-label{
+  display:flex;align-items:center;gap:12px;cursor:pointer;
+}
+.checklist-label input[type="checkbox"]{
+  width:18px;height:18px;flex-shrink:0;cursor:pointer;
+  accent-color:var(--accent);
+}
+.checklist-text{font-size:13px;font-weight:500;line-height:1.4}
+.checklist-saving{
+  font-size:11px;color:var(--hint);margin-top:4px;margin-left:30px;
+}
+
 /* ── BUDGET ─────────────────────────────────────────────────────────────── */
 .budget-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
 @media(max-width:600px){.budget-summary-grid{grid-template-columns:1fr}}
@@ -493,6 +542,7 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
     <button class="tab" onclick="switchTab('hotels',this)">Hotels</button>
     <button class="tab" onclick="switchTab('tips',this)">Tips</button>
     <button class="tab" onclick="switchTab('budget',this)">Budget</button>
+    <button class="tab" onclick="switchTab('checklist',this)">Checklist</button>
   </div>
 
   <div class="panel active" id="panel-summary"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
@@ -500,81 +550,170 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
   <div class="panel" id="panel-hotels"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
   <div class="panel" id="panel-tips"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
   <div class="panel" id="panel-budget"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
+  <div class="panel" id="panel-checklist"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
 
 </div>
 
 <script>
 // ── CONFIG ───────────────────────────────────────────────────────────────────
-const SHEET_TABS = { days:'Days', schedule:'Schedule', hotels:'Hotels', tips:'Tips', budget:'Budget' };
+const SHEET_TABS = { days:'Days', schedule:'Schedule', hotels:'Hotels', tips:'Tips', budget:'Budget', checklist:'Checklist' };
 const LS_KEY = 'jp2026_sheet_id';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxCyX0oiAJmC2OUvl0WnpiSSlzhw98kFjNIhqAnZKuSnVewUlp81AJnZhEOkZ31j77k/exec';
 
 // ── ACTIVITY THUMBNAIL LOOKUP (map_query → image URL) ────────────────────────
 const ACTIVITY_IMAGES = {
   // ── Tokyo: Asakusa ──────────────────────────────────────────────────────────
-  'MIMARU Tokyo Asakusa Station':            'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/24701-Asakusa%2C_Tokyo.jpg/480px-24701-Asakusa%2C_Tokyo.jpg',
-  'Sumida River Tokyo':                      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Sumida_River_from_Kiyosu_Bridge.jpg/480px-Sumida_River_from_Kiyosu_Bridge.jpg',
-  'Senso-ji Temple Asakusa Tokyo':           'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/24701-Asakusa%2C_Tokyo.jpg/480px-24701-Asakusa%2C_Tokyo.jpg',
-  'Sumida Park Asakusa playground Tokyo':    'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Sumida_Park_sakura_2010.jpg/480px-Sumida_Park_sakura_2010.jpg',
+  'MIMARU Tokyo Asakusa Station':            'https://images.pexels.com/photos/18326801/pexels-photo-18326801.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Sumida River Tokyo':                      'https://images.pexels.com/photos/30747591/pexels-photo-30747591.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Senso-ji Temple Asakusa Tokyo':           'https://images.pexels.com/photos/31376831/pexels-photo-31376831.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Sumida Park Asakusa playground Tokyo':    'https://images.pexels.com/photos/31376830/pexels-photo-31376830.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
   // ── Tokyo: Ueno / Skytree ───────────────────────────────────────────────────
-  'Tokyo Skytree':                           'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Tokyo_Sky_Tree_2012.JPG/400px-Tokyo_Sky_Tree_2012.JPG',
-  'Kura Sushi Asakusa Tokyo':                'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Kura_Sushi_conveyor_belt.jpg/480px-Kura_Sushi_conveyor_belt.jpg',
-  'Shinobazu Pond Ueno Tokyo':               'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Shinobazunoike_2009.jpg/480px-Shinobazunoike_2009.jpg',
-  'Ameyoko Market Ueno Tokyo':               'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Ueno_Ameyoko_Tokyo_Japan.jpg/480px-Ueno_Ameyoko_Tokyo_Japan.jpg',
-  'Yanaka Tokyo':                            'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Yanaka_ginza.JPG/480px-Yanaka_ginza.JPG',
+  'Tokyo Skytree':                           'https://images.pexels.com/photos/19852026/pexels-photo-19852026.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Kura Sushi Asakusa Tokyo':                'https://images.pexels.com/photos/343870/pexels-photo-343870.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Shinobazu Pond Ueno Tokyo':               'https://images.pexels.com/photos/5466395/pexels-photo-5466395.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Ameyoko Market Ueno Tokyo':               'https://images.pexels.com/photos/29481134/pexels-photo-29481134.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Yanaka Tokyo':                            'https://images.pexels.com/photos/31644594/pexels-photo-31644594.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
   // ── Tokyo: Harajuku / Shibuya ───────────────────────────────────────────────
-  'Meiji Shrine Harajuku Tokyo':             'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Meiji_Jingu_entrance.jpg/400px-Meiji_Jingu_entrance.jpg',
-  'Yoyogi Park playground Tokyo':            'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Yoyogi_Park_area.jpg/480px-Yoyogi_Park_area.jpg',
-  'Omotesando Tokyo':                        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Omotesando_Hills.jpg/480px-Omotesando_Hills.jpg',
-  'Shibuya Crossing Tokyo':                  'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Shibuya_scramble.jpg/480px-Shibuya_scramble.jpg',
-  'Shibuya Hikarie food floor Tokyo':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Hikarie_2012.jpg/480px-Hikarie_2012.jpg',
+  'Meiji Shrine Harajuku Tokyo':             'https://images.pexels.com/photos/3800108/pexels-photo-3800108.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Yoyogi Park playground Tokyo':            'https://images.pexels.com/photos/17393526/pexels-photo-17393526.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Omotesando Tokyo':                        'https://images.pexels.com/photos/5362206/pexels-photo-5362206.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Shibuya Crossing Tokyo':                  'https://images.pexels.com/photos/19658291/pexels-photo-19658291.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Shibuya Hikarie food floor Tokyo':        'https://images.pexels.com/photos/30996483/pexels-photo-30996483.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
   // ── Hakone ──────────────────────────────────────────────────────────────────
-  'Hakone-Yumoto Station':                   'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Hakoneyumoto_station_20090907.jpg/480px-Hakoneyumoto_station_20090907.jpg',
-  'Ryokan Ubuya Lake Kawaguchi':             'https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Lake_Ashi_and_Mt._Fuji.jpg/480px-Lake_Ashi_and_Mt._Fuji.jpg',
-  'Hakone Ropeway Owakudani':                'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Owakudani_from_Hakone_Ropeway.JPG/480px-Owakudani_from_Hakone_Ropeway.JPG',
-  'Lake Ashi Pier Hakone':                   'https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Lake_Ashi_and_Mt._Fuji.jpg/480px-Lake_Ashi_and_Mt._Fuji.jpg',
-  'Hakone-machi Pier restaurants':           'https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Lake_Ashi_and_Mt._Fuji.jpg/480px-Lake_Ashi_and_Mt._Fuji.jpg',
+  'Hakone-Yumoto Station':                   'https://images.pexels.com/photos/30091614/pexels-photo-30091614.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Ryokan Ubuya Lake Kawaguchi':             'https://images.pexels.com/photos/10320658/pexels-photo-10320658.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Hakone Ropeway Owakudani':                'https://images.pexels.com/photos/30091614/pexels-photo-30091614.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Lake Ashi Pier Hakone':                   'https://images.pexels.com/photos/31257039/pexels-photo-31257039.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Hakone-machi Pier restaurants':           'https://images.pexels.com/photos/20408262/pexels-photo-20408262.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
   // ── Kyoto: Arrival & Gion ───────────────────────────────────────────────────
-  'Kyoto Station':                           'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kyoto_station_south_gate.jpg/480px-Kyoto_station_south_gate.jpg',
-  'Hotel Shizuru Kyoto Kawaramachi':         'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Kamo_River_Kyoto.jpg/480px-Kamo_River_Kyoto.jpg',
-  'Gion Shirakawa Canal Kyoto':              'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Shirakawa_Canal%2C_Kyoto.jpg/480px-Shirakawa_Canal%2C_Kyoto.jpg',
+  'Kyoto Station':                           'https://images.pexels.com/photos/5770190/pexels-photo-5770190.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Hotel Shizuru Kyoto Kawaramachi':         'https://images.pexels.com/photos/3625108/pexels-photo-3625108.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Gion Shirakawa Canal Kyoto':              'https://images.pexels.com/photos/30612368/pexels-photo-30612368.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
   // ── Kyoto: Arashiyama ───────────────────────────────────────────────────────
-  'Arashiyama Bamboo Grove Kyoto':           'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Bamboo_groves_in_Sagano%2C_Arashiyama.jpg/400px-Bamboo_groves_in_Sagano%2C_Arashiyama.jpg',
-  'Tenryu-ji Temple Garden Arashiyama Kyoto':'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Tenryu-ji_Sogen_Pond.jpg/480px-Tenryu-ji_Sogen_Pond.jpg',
-  'Sagano Scenic Railway Arashiyama Kyoto':  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Sagano_Scenic_Railway.JPG/480px-Sagano_Scenic_Railway.JPG',
-  'Arashiyama Yoshimura Restaurant Kyoto':   'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Bamboo_groves_in_Sagano%2C_Arashiyama.jpg/400px-Bamboo_groves_in_Sagano%2C_Arashiyama.jpg',
+  'Arashiyama Bamboo Grove Kyoto':           'https://images.pexels.com/photos/19693266/pexels-photo-19693266.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Tenryu-ji Temple Garden Arashiyama Kyoto':'https://images.pexels.com/photos/16154088/pexels-photo-16154088.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Sagano Scenic Railway Arashiyama Kyoto':  'https://images.pexels.com/photos/30380482/pexels-photo-30380482.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Arashiyama Yoshimura Restaurant Kyoto':   'https://images.pexels.com/photos/2070025/pexels-photo-2070025.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
   // ── Kyoto: Fushimi & South ──────────────────────────────────────────────────
-  'Fushimi Inari Taisha Shrine Kyoto':       'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Fushimi_Inari_Taisha_torii.jpg/400px-Fushimi_Inari_Taisha_torii.jpg',
-  'Tofuku-ji Temple Kyoto':                  'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Tofukuji-hojo.jpg/480px-Tofukuji-hojo.jpg',
-  'Nijo Castle Kyoto':                       'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Nijojo_Castle_Kyoto.JPG/480px-Nijojo_Castle_Kyoto.JPG',
-  'Nishiki Market Kyoto':                    'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Nishiki_Market_Kyoto.jpg/480px-Nishiki_Market_Kyoto.jpg',
+  'Fushimi Inari Taisha Shrine Kyoto':       'https://images.pexels.com/photos/5777843/pexels-photo-5777843.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Tofuku-ji Temple Kyoto':                  'https://images.pexels.com/photos/22616210/pexels-photo-22616210.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Nijo Castle Kyoto':                       'https://images.pexels.com/photos/31417180/pexels-photo-31417180.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Nishiki Market Kyoto':                    'https://images.pexels.com/photos/31328196/pexels-photo-31328196.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
   // ── Kyoto: Railway Museum & Umekoji ─────────────────────────────────────────
-  'Kyoto Railway Museum':                    'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Kyoto_Railway_Museum_201606.jpg/480px-Kyoto_Railway_Museum_201606.jpg',
-  'Umekoji Park Kyoto playground':           'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Umekoji_Park_Kyoto.jpg/480px-Umekoji_Park_Kyoto.jpg',
+  'Kyoto Railway Museum':                    'https://images.pexels.com/photos/30999445/pexels-photo-30999445.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Umekoji Park Kyoto playground':           'https://images.pexels.com/photos/12598386/pexels-photo-12598386.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
   // ── Kyoto: teamLab ──────────────────────────────────────────────────────────
-  'teamLab Biovortex Kyoto Station':         'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/TeamLab_Borderless_2019_%2848671533276%29.jpg/480px-TeamLab_Borderless_2019_%2848671533276%29.jpg',
-  'Porta Dining Kyoto Station':              'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kyoto_station_south_gate.jpg/480px-Kyoto_station_south_gate.jpg',
+  'teamLab Biovortex Kyoto Station':         'https://images.pexels.com/photos/29106953/pexels-photo-29106953.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Porta Dining Kyoto Station':              'https://images.pexels.com/photos/20048254/pexels-photo-20048254.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
   // ── Nara ────────────────────────────────────────────────────────────────────
-  'Nara Deer Park':                          'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Nara_deer.jpg/480px-Nara_deer.jpg',
-  'Todai-ji Temple Nara':                    'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Todaiji0511.JPG/480px-Todaiji0511.JPG',
-  'Kasuga Grand Shrine path Nara':           'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Kasugataisha05s3200.jpg/480px-Kasugataisha05s3200.jpg',
+  'Nara Deer Park':                          'https://images.pexels.com/photos/15845939/pexels-photo-15845939.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Todai-ji Temple Nara':                    'https://images.pexels.com/photos/31037494/pexels-photo-31037494.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Kasuga Grand Shrine path Nara':           'https://images.pexels.com/photos/31001248/pexels-photo-31001248.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
   // ── Osaka ───────────────────────────────────────────────────────────────────
-  'Osaka Aquarium Kaiyukan':                 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Osaka_Aquarium_Kaiyukan01s3200.jpg/480px-Osaka_Aquarium_Kaiyukan01s3200.jpg',
-  'Dotonbori Osaka':                         'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Dotonbori_Osaka_2007.jpg/480px-Dotonbori_Osaka_2007.jpg',
-  'Tombori River Cruise Dotonbori Osaka':    'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Dotonbori_Osaka_2007.jpg/480px-Dotonbori_Osaka_2007.jpg',
-  'Shinsaibashi Shopping Street Osaka':      'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Shinsaibashi-suji_Shopping_Street.jpg/480px-Shinsaibashi-suji_Shopping_Street.jpg',
+  'Osaka Aquarium Kaiyukan':                 'https://images.pexels.com/photos/4671472/pexels-photo-4671472.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Dotonbori Osaka':                         'https://images.pexels.com/photos/34438939/pexels-photo-34438939.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Tombori River Cruise Dotonbori Osaka':    'https://images.pexels.com/photos/33425250/pexels-photo-33425250.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Shinsaibashi Shopping Street Osaka':      'https://images.pexels.com/photos/32459950/pexels-photo-32459950.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'MIMARU Osaka Shinsaibashi':               'https://images.pexels.com/photos/31743680/pexels-photo-31743680.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
   // ── Tokyo: Ginza / Hibiya return ────────────────────────────────────────────
-  'Kyoto Station Shinkansen':                'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kyoto_station_south_gate.jpg/480px-Kyoto_station_south_gate.jpg',
-  'Hibiya Park Tokyo':                       'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Hibiya_Park_Tokyo.jpg/480px-Hibiya_Park_Tokyo.jpg',
-  'Ginza Six food floor Tokyo':              'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Ginza_Crossing.jpg/480px-Ginza_Crossing.jpg',
-  'teamLab Borderless Azabudai Hills Tokyo': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/TeamLab_Borderless_2019_%2848671533276%29.jpg/480px-TeamLab_Borderless_2019_%2848671533276%29.jpg',
-  'Azabudai Hills Tokyo':                    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/TeamLab_Borderless_2019_%2848671533276%29.jpg/480px-TeamLab_Borderless_2019_%2848671533276%29.jpg',
-  'Toyosu Park Tokyo waterfront':            'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Toyosu_Market_20181011.jpg/480px-Toyosu_Market_20181011.jpg',
-  'Itoya Ginza Tokyo':                       'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Ginza_Crossing.jpg/480px-Ginza_Crossing.jpg',
-  'Ginza restaurants Tokyo':                 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Ginza_Crossing.jpg/480px-Ginza_Crossing.jpg',
+  'Kyoto Station Shinkansen':                'https://images.pexels.com/photos/9648944/pexels-photo-9648944.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Hibiya Park Tokyo':                       'https://images.pexels.com/photos/31393578/pexels-photo-31393578.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Ginza Six food floor Tokyo':              'https://images.pexels.com/photos/28486324/pexels-photo-28486324.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'teamLab Borderless Azabudai Hills Tokyo': 'https://images.pexels.com/photos/29106953/pexels-photo-29106953.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Azabudai Hills Tokyo':                    'https://images.pexels.com/photos/31883917/pexels-photo-31883917.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Toyosu Park Tokyo waterfront':            'https://images.pexels.com/photos/34022255/pexels-photo-34022255.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Itoya Ginza Tokyo':                       'https://images.pexels.com/photos/31178674/pexels-photo-31178674.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Ginza restaurants Tokyo':                 'https://images.pexels.com/photos/3532924/pexels-photo-3532924.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
   // ── Departure: Haneda ───────────────────────────────────────────────────────
-  'Haneda International Airport Tokyo':      'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/HND_Terminal1.jpg/480px-HND_Terminal1.jpg',
-  'Haneda Airport Departure Terminal':       'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/HND_Terminal1.jpg/480px-HND_Terminal1.jpg',
-  'Haneda Airport observation deck':         'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/HND_Terminal1.jpg/480px-HND_Terminal1.jpg',
+  'Haneda International Airport Tokyo':      'https://images.pexels.com/photos/20060367/pexels-photo-20060367.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Haneda Airport Departure Terminal':       'https://images.pexels.com/photos/4524740/pexels-photo-4524740.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+  'Haneda Airport observation deck':         'https://images.pexels.com/photos/1730814/pexels-photo-1730814.jpeg?auto=compress&cs=tinysrgb&w=480&h=320&fit=crop',
+};
+
+// ── MEAL PLAN (injected for days missing lunch/dinner in sheet) ───────────────
+// Keys use dateKey() format: YYYY-(month0indexed)-D  e.g. May 15 = '2026-4-15'
+const MEAL_PLAN = {
+  '2026-4-15': { // Day 1 — arrival, jet-lag day
+    dinner: { name: '7-Eleven konbini', detail: 'Onigiri, karaage, warm nikuman. Jet-lag day — keep it easy and early.', map_query: '7-Eleven Asakusa Tokyo' }
+  },
+  '2026-4-16': { // Day 2 — Asakusa (dinner already in sheet: Kura Sushi)
+    lunch: { name: 'Asakusa Imahan', detail: 'Famous sukiyaki/shabu-shabu near Kaminarimon. Or grab a hot dog from Nakamise stalls for the toddler.', map_query: 'Senso-ji Temple Asakusa Tokyo' }
+  },
+  '2026-4-17': { // Day 3 — Ueno (dinner already: famires)
+    lunch: { name: 'Ameyoko market stalls', detail: 'Eat-and-walk: taiyaki, skewers, fresh fruit. Or Matsuzakaya B2 depachika for a sit-down bento.', map_query: 'Ameyoko Market Ueno Tokyo' }
+  },
+  '2026-4-18': { // Day 4 — Harajuku/Shibuya (dinner already: Hikarie B2)
+    lunch: { name: 'Maisen katsu sandwich', detail: 'Iconic tonkatsu sandwiches to eat in Yoyogi Park — toddler-proof, no mess. Or Omotesando Hills B2 food court.', map_query: 'Omotesando Tokyo' }
+  },
+  '2026-4-19': { // Day 5 — travel to Hakone (dinner already: kaiseki)
+    lunch: { name: 'Ekiben on the Romancecar', detail: 'Buy a station bento (ekiben) at Shinjuku before boarding. Eating on the scenic Romancecar is half the fun.', map_query: 'Odakyu Shinjuku Station Tokyo' }
+  },
+  '2026-4-21': { // Day 7 — Kyoto arrival day (no dinner in sheet)
+    lunch: { name: 'Shinkansen ekiben', detail: 'Buy a bento on the platform at Odawara. Toddler loves eating on the bullet train.', map_query: 'Odawara Station' },
+    dinner: { name: 'Ippudo Kyoto or local teishoku', detail: 'Ramen or set meal near Hotel Shizuru — easy first Kyoto dinner after a travel day.', map_query: 'Hotel Shizuru Kyoto Kawaramachi' }
+  },
+  '2026-4-27': { // Day 13 — back in Tokyo (dinner already: Dinner - Ginza)
+    lunch: { name: 'Ginza Six B2 depachika', detail: 'Excellent basement food floor: tonkatsu, sushi, or a bento to eat in adjacent Hibiya Park.', map_query: 'Ginza Six food floor Tokyo' }
+  },
+};
+
+// ── TRANSPORT HINTS (how to get TO each activity) ─────────────────────────────
+const TRANSPORT_HINTS = {
+  // Tokyo: Asakusa area
+  'Senso-ji Temple Asakusa Tokyo':          { icon:'🚶', label:'10 min walk from hotel' },
+  'Sumida Park Asakusa playground Tokyo':   { icon:'🚶', label:'5 min walk from Senso-ji' },
+  'Tokyo Skytree':                          { icon:'🚶', label:'15 min walk or Tobu Skytree Line (1 stop)' },
+  // Tokyo: Ueno
+  'Shinobazu Pond Ueno Tokyo':              { icon:'🚇', label:'Ginza Line → Ueno (3 stops, 8 min)' },
+  'Ameyoko Market Ueno Tokyo':              { icon:'🚶', label:'3 min walk from Shinobazu Pond' },
+  'Yanaka Tokyo':                           { icon:'🚇', label:'Chiyoda Line → Nishi-Nippori (12 min)' },
+  // Tokyo: Harajuku/Shibuya
+  'Meiji Shrine Harajuku Tokyo':            { icon:'🚇', label:'Ginza + Hanzomon Lines → Omotesando (28 min)' },
+  'Yoyogi Park playground Tokyo':           { icon:'🚶', label:'5 min walk from Meiji Shrine' },
+  'Omotesando Tokyo':                       { icon:'🚶', label:'10 min walk through Omotesando' },
+  'Shibuya Crossing Tokyo':                 { icon:'🚇', label:'Hanzomon Line → Shibuya (3 min)' },
+  'Shibuya Hikarie food floor Tokyo':       { icon:'🚶', label:'2 min walk from scramble crossing' },
+  // Travel: Hakone
+  'Hakone-Yumoto Station':                  { icon:'🚃', label:'Odakyu Romancecar from Shinjuku (85 min)' },
+  'Ryokan Ubuya Lake Kawaguchi':            { icon:'🚌', label:'Tozan Bus from Hakone-Yumoto (~40 min)' },
+  'Hakone Ropeway Owakudani':               { icon:'🚠', label:'Hakone Ropeway from Gora (20 min)' },
+  'Lake Ashi Pier Hakone':                  { icon:'🛥️', label:'Pirate ship cruise from Togendai (30 min)' },
+  'Hakone-machi Pier restaurants':          { icon:'🚶', label:'5 min walk from pier dock' },
+  // Travel: Kyoto
+  'Kyoto Station':                          { icon:'🚅', label:'Tokaido Shinkansen from Odawara (38 min)' },
+  'Hotel Shizuru Kyoto Kawaramachi':        { icon:'🚶', label:'10 min walk or taxi from Kyoto Station' },
+  'Gion Shirakawa Canal Kyoto':             { icon:'🚶', label:'20 min walk east or taxi from hotel' },
+  // Kyoto: Arashiyama
+  'Arashiyama Bamboo Grove Kyoto':          { icon:'🚃', label:'JR Sagano Line → Saga-Arashiyama (15 min)' },
+  'Tenryu-ji Temple Garden Arashiyama Kyoto':{ icon:'🚶', label:'3 min walk from bamboo grove' },
+  'Sagano Scenic Railway Arashiyama Kyoto': { icon:'🚂', label:'Sagano Torokko from Arashiyama station' },
+  'Arashiyama Yoshimura Restaurant Kyoto':  { icon:'🚶', label:'5 min walk to riverside' },
+  // Kyoto: Fushimi/South
+  'Fushimi Inari Taisha Shrine Kyoto':      { icon:'🚃', label:'JR Nara Line → Inari (5 min from Kyoto Stn)' },
+  'Tofuku-ji Temple Kyoto':                 { icon:'🚶', label:'20 min walk north from Inari' },
+  'Nijo Castle Kyoto':                      { icon:'🚌', label:'City Bus #9 or #50 (20 min)' },
+  // Nara day trip
+  'Nara Deer Park':                         { icon:'🚃', label:'Kintetsu Kyoto → Kintetsu Nara (45 min, ¥760)' },
+  'Todai-ji Temple Nara':                   { icon:'🚶', label:'15 min walk through the park' },
+  'Kasuga Grand Shrine path Nara':          { icon:'🚶', label:'10 min walk east of Todai-ji' },
+  // Kyoto: museums/teamLab
+  'Nishiki Market Kyoto':                   { icon:'🚶', label:'20 min walk or subway to Shijo' },
+  'Kyoto Railway Museum':                   { icon:'🚌', label:'Bus #33 from Kyoto Station (10 min)' },
+  'teamLab Biovortex Kyoto Station':        { icon:'🚶', label:'5 min walk from Kyoto Station' },
+  // Osaka
+  'Osaka Aquarium Kaiyukan':                { icon:'🚇', label:'Subway Chuo Line → Osakako (25 min from Namba)' },
+  'Dotonbori Osaka':                        { icon:'🚇', label:'Subway Chuo Line → Namba (15 min)' },
+  'Tombori River Cruise Dotonbori Osaka':   { icon:'🛥️', label:'dock at Dotonbori canal, near Glico sign' },
+  'Shinsaibashi Shopping Street Osaka':     { icon:'🚶', label:'5 min walk north of Dotonbori' },
+  // Return Tokyo
+  'Hibiya Park Tokyo':                      { icon:'🚇', label:'Hibiya Line → Hibiya (3 stops)' },
+  'Ginza Six food floor Tokyo':             { icon:'🚶', label:'8 min walk from Hibiya Park' },
+  'teamLab Borderless Azabudai Hills Tokyo':{ icon:'🚇', label:'Hibiya Line → Kamiyacho (5 min)' },
+  'Toyosu Park Tokyo waterfront':           { icon:'🚇', label:'Yurikamome → Shijo-mae (25 min from Shimbashi)' },
+  'Itoya Ginza Tokyo':                      { icon:'🚇', label:'Yurikamome back → Shimbashi, walk to Ginza' },
+  // Departure
+  'Haneda International Airport Tokyo':     { icon:'🚌', label:'Airport Limousine Bus from hotel (~40 min)' },
+  'Haneda Airport observation deck':        { icon:'🚶', label:'inside Terminal 3' },
 };
 
 // ── MAP: city colors & zoom centres ──────────────────────────────────────────
@@ -970,6 +1109,22 @@ function renderMultiDay(startIdx){
   container.innerHTML = html;
 }
 
+// ── MEAL ROW HELPER ───────────────────────────────────────────────────────────
+function mealRow(m, type){
+  const icon  = type==='lunch' ? '🍱' : '🍽️';
+  const label = type==='lunch' ? 'Lunch' : 'Dinner';
+  return `<div class="tl-item tl-meal">
+    <div class="tl-time"></div>
+    <div class="tl-body">
+      <div class="tl-text">
+        <div class="tl-name">${icon} ${label} — ${m.name}</div>
+        <div class="tl-detail">${m.detail}</div>
+        ${m.map_query?`<a class="tl-map" href="${gm(m.map_query)}" target="_blank">Maps →</a>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
 // ── RENDER HOURLY ─────────────────────────────────────────────────────────────
 function renderHourly(days, schedule){
   _days = days;
@@ -984,7 +1139,24 @@ function renderHourly(days, schedule){
   const panels = days.map((d,i)=>{
     const slots = byDate[d.date]||[];
     const isWarn = d.flag!=='ok';
-    const rows = slots.map(s=>{
+
+    // Meal injection: check what's already in sheet
+    const parsedDate = tryParseDate(d.date);
+    const mealKey  = parsedDate ? dateKey(parsedDate) : null;
+    const meal     = mealKey && MEAL_PLAN[mealKey] ? MEAL_PLAN[mealKey] : {};
+    const hasLunch  = slots.some(s=>/lunch/i.test(s.name));
+    const hasDinner = slots.some(s=>/dinner|kaiseki/i.test(s.name));
+
+    const rowParts = [];
+    slots.forEach((s, idx)=>{
+      // Transport connector before this item (skip first)
+      if(idx > 0){
+        const hint = TRANSPORT_HINTS[s.map_query] || TRANSPORT_HINTS[s.name];
+        if(hint) rowParts.push(
+          `<div class="tl-transport"><span class="tl-transport-icon">${hint.icon}</span><span class="tl-transport-label">${hint.label}</span></div>`
+        );
+      }
+
       const tags=[];
       if(s.tag_stroller==='yes') tags.push(`<span class="tl-tag t-syes">stroller OK</span>`);
       if(s.tag_stroller==='no')  tags.push(`<span class="tl-tag t-sno">no stroller</span>`);
@@ -995,7 +1167,7 @@ function renderHourly(days, schedule){
       const thumb = imgSrc
         ? `<img class="tl-thumb" src="${imgSrc}" alt="${s.name}" onerror="imgErr(this)">`
         : '';
-      return `<div class="tl-item">
+      rowParts.push(`<div class="tl-item">
         <div class="tl-time">${s.time}</div>
         <div class="tl-body">
           ${thumb}
@@ -1006,8 +1178,18 @@ function renderHourly(days, schedule){
             ${s.map_query?`<a class="tl-map" href="${gm(s.map_query)}" target="_blank">Maps →</a>`:''}
           </div>
         </div>
-      </div>`;
-    }).join('');
+      </div>`);
+
+      // Inject lunch after the nap slot
+      if(s.tag_nap==='yes' && !hasLunch && meal.lunch){
+        rowParts.push(mealRow(meal.lunch,'lunch'));
+      }
+    });
+
+    // Inject dinner at end if missing
+    if(!hasDinner && meal.dinner) rowParts.push(mealRow(meal.dinner,'dinner'));
+
+    const rows = rowParts.join('');
 
     return `<div class="hourly-panel${i===0?' active':''}" id="hp-${i}">
       <div class="hourly-header">
@@ -1247,6 +1429,63 @@ function renderBudget(items){
     </div>`;
 }
 
+// ── RENDER CHECKLIST ─────────────────────────────────────────────────────────
+function fmtChecklistDate(str){
+  if(!str || str==='Before trip') return '🗓 Before Trip';
+  const d = tryParseDate(str);
+  if(!d) return str;
+  const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `📅 ${DOW[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`;
+}
+
+function renderChecklist(items){
+  if(!items||!items.length)
+    return `<p class="empty-state">No checklist items found. Make sure the <strong>Checklist</strong> tab is published as CSV.</p>`;
+
+  // Group by Date value, preserving order
+  const groupOrder=[], groupMap={};
+  items.forEach((item, idx)=>{
+    const grp = item.Date || 'Before trip';
+    if(!groupMap[grp]){ groupMap[grp]=[]; groupOrder.push(grp); }
+    groupMap[grp].push({...item, _row: idx+2}); // sheet row: 1=header, data starts at 2
+  });
+
+  return `<div class="checklist-wrap">${
+    groupOrder.map(grp=>`
+      <div class="checklist-group">
+        <div class="checklist-group-header">${fmtChecklistDate(grp)}</div>
+        ${groupMap[grp].map(item=>`
+          <div class="checklist-item${item.Status==='Done'?' done':''}" id="cl-${item._row}">
+            <label class="checklist-label">
+              <input type="checkbox" ${item.Status==='Done'?'checked':''}
+                onchange="toggleChecklist(${item._row}, this.checked, this)">
+              <span class="checklist-text">${item.Action}</span>
+            </label>
+            <div class="checklist-saving" id="cl-saving-${item._row}" style="display:none">Saving…</div>
+          </div>`).join('')}
+      </div>`).join('')
+  }</div>`;
+}
+
+async function toggleChecklist(rowNum, isDone, checkbox){
+  const value = isDone ? 'Done' : 'Pending';
+  const row   = document.getElementById('cl-'+rowNum);
+  const saving= document.getElementById('cl-saving-'+rowNum);
+  if(row)    row.classList.toggle('done', isDone);
+  if(saving) saving.style.display = 'block';
+  checkbox.disabled = true;
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ token:'Japan26', tab:'Checklist', action:'update_cell', row:rowNum, col:'Status', value })
+    });
+  } catch(e){ console.error('Checklist update failed:', e); }
+  checkbox.disabled = false;
+  if(saving) saving.style.display = 'none';
+}
+
 // ── TAB / DAY SWITCHING ───────────────────────────────────────────────────────
 function switchTab(id, el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -1284,14 +1523,14 @@ function selDay(i){
 // ── LOAD ALL DATA ─────────────────────────────────────────────────────────────
 async function loadAll(){
   if(!SHEET_ID){
-    ['summary','hourly','hotels','tips','budget'].forEach(id=>
+    ['summary','hourly','hotels','tips','budget','checklist'].forEach(id=>
       document.getElementById('panel-'+id).innerHTML =
         `<p class="empty-state">Paste your Google Sheet ID above to load your itinerary.</p>`
     );
     return;
   }
 
-  let days, schedule, hotels, tips, budget;
+  let days, schedule, hotels, tips, budget, checklist;
   try {
     [days, schedule, hotels, tips] = await Promise.all([
       fetchCSV(SHEET_TABS.days),
@@ -1299,14 +1538,18 @@ async function loadAll(){
       fetchCSV(SHEET_TABS.hotels),
       fetchCSV(SHEET_TABS.tips)
     ]);
-    // Budget tab is optional — show error inline if it fails
+    // Optional tabs — show inline error if they fail
     try { budget = await fetchCSV(SHEET_TABS.budget); } catch(e){
       budget = [];
-      document.getElementById('panel-budget').innerHTML = errorBanner(`Budget tab error: ${e.message}. Make sure the <strong>Budget</strong> sheet tab is published: <em>File → Share → Publish to web → Budget → CSV</em>.`);
+      document.getElementById('panel-budget').innerHTML = errorBanner(`Budget tab error: ${e.message}.`);
+    }
+    try { checklist = await fetchCSV(SHEET_TABS.checklist); } catch(e){
+      checklist = [];
+      document.getElementById('panel-checklist').innerHTML = errorBanner(`Checklist tab error: ${e.message}.`);
     }
   } catch(e){
     const msg = `${e.message}. Check the Sheet ID and that it's published to the web.`;
-    ['summary','hourly','hotels','tips','budget'].forEach(id=>
+    ['summary','hourly','hotels','tips','budget','checklist'].forEach(id=>
       document.getElementById('panel-'+id).innerHTML = errorBanner(msg)
     );
     return;
@@ -1320,6 +1563,7 @@ async function loadAll(){
   document.getElementById('panel-hotels').innerHTML  = renderHotels(hotels);
   document.getElementById('panel-tips').innerHTML    = renderTips(tips);
   document.getElementById('panel-budget').innerHTML  = renderBudget(budget);
+  document.getElementById('panel-checklist').innerHTML = renderChecklist(checklist||[]);
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
