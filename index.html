@@ -14,47 +14,47 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   /* Core surfaces */
-  --ink:#2f2725;--muted:#5c5452;--hint:#8a8381;
-  --surface:#ffffff;--raised:#faf9f5;
-  --surface-low:#f4f0e6;--surface-high:#e8e3d8;--surface-highest:#d9d3c7;
-  --border:#e0dbcf;--border-m:rgba(211,206,193,.4);
+  --ink:#1A2E44;--muted:#4A627B;--hint:#7D93AA;
+  --surface:#ffffff;--raised:#f2f7fc;
+  --surface-low:#e6f0fa;--surface-high:#d9e8f5;--surface-highest:#c9dcf0;
+  --border:#d9e8f5;--border-m:rgba(217,232,245,.6);
   /* Shadows — ambient only, very subtle */
   --shadow-sm:none;--shadow-md:none;
-  --shadow-hover:0 24px 48px rgba(47,39,37,.08);
-  /* Brand palette — Torii Red / Matcha / Sakura */
-  --accent:#d3381c;--accent-bg:#fad9d5;--accent-container:#e55a40;
-  --secondary:#7b8d62;--secondary-container:#d1dec0;
-  --tertiary:#e08b96;--tertiary-container:#fadbe0;
+  --shadow-hover:0 24px 48px rgba(26,46,68,.12);
+  /* Brand palette — Orange / Blue / White */
+  --accent:#F26D21;--accent-bg:#ffe8d6;--accent-container:#ff9a54;
+  --secondary:#3878b2;--secondary-container:#d6eaff;
+  --tertiary:#4a90e2;--tertiary-container:#e4f0fc;
   /* Radii — card xl, pill for chips/btns */
   --r:24px;--rm:16px;--rs:9999px;
   /* Fonts */
   --serif:'Noto Serif JP','Plus Jakarta Sans',system-ui,sans-serif;
   --sans:'Inter',system-ui,sans-serif;
   /* Semantic colour tokens */
-  --blue-bg:#d0e3f2;--blue-txt:#1c3d5a;--blue-bd:transparent;
-  --green-bg:#d1dec0;--green-txt:#2a3b1a;--green-bd:transparent;
-  --amber-bg:#fce3b8;--amber-txt:#5e4313;--amber-bd:transparent;
-  --pink-bg:#fadbe0;--pink-txt:#61202b;--pink-bd:transparent;
-  --red-bg:#fad9d5;--red-txt:#5e130c;--red-bd:transparent;
-  --purple-bg:#e2d9f2;--purple-txt:#382759;--purple-bd:transparent;
+  --blue-bg:#d6eaff;--blue-txt:#1A2E44;--blue-bd:transparent;
+  --green-bg:#ffe8d6;--green-txt:#7a3007;--green-bd:transparent;
+  --amber-bg:#ffd199;--amber-txt:#754a0d;--amber-bd:transparent;
+  --pink-bg:#ffebed;--pink-txt:#8f1d30;--pink-bd:transparent;
+  --red-bg:#fcdcd9;--red-txt:#8a1b12;--red-bd:transparent;
+  --purple-bg:#e8e1f5;--purple-txt:#382263;--purple-bd:transparent;
 }
 /* Force Light Mode / Override Dark Mode to use Japanese Theme */
 @media(prefers-color-scheme:dark){
   :root{
-    --ink:#2f2725;--muted:#5c5452;--hint:#8a8381;
-    --surface:#ffffff;--raised:#faf9f5;
-    --surface-low:#f4f0e6;--surface-high:#e8e3d8;--surface-highest:#d9d3c7;
-    --border:#e0dbcf;--border-m:rgba(211,206,193,.4);
-    --shadow-hover:0 24px 48px rgba(47,39,37,.08);
-    --accent:#d3381c;--accent-bg:#fad9d5;--accent-container:#e55a40;
-    --secondary:#7b8d62;--secondary-container:#d1dec0;
-    --tertiary:#e08b96;--tertiary-container:#fadbe0;
-    --blue-bg:#d0e3f2;--blue-txt:#1c3d5a;--blue-bd:transparent;
-    --green-bg:#d1dec0;--green-txt:#2a3b1a;--green-bd:transparent;
-    --amber-bg:#fce3b8;--amber-txt:#5e4313;--amber-bd:transparent;
-    --pink-bg:#fadbe0;--pink-txt:#61202b;--pink-bd:transparent;
-    --red-bg:#fad9d5;--red-txt:#5e130c;--red-bd:transparent;
-    --purple-bg:#e2d9f2;--purple-txt:#382759;--purple-bd:transparent;
+    --ink:#1A2E44;--muted:#4A627B;--hint:#7D93AA;
+    --surface:#ffffff;--raised:#f2f7fc;
+    --surface-low:#e6f0fa;--surface-high:#d9e8f5;--surface-highest:#c9dcf0;
+    --border:#d9e8f5;--border-m:rgba(217,232,245,.6);
+    --shadow-hover:0 24px 48px rgba(26,46,68,.12);
+    --accent:#F26D21;--accent-bg:#ffe8d6;--accent-container:#ff9a54;
+    --secondary:#3878b2;--secondary-container:#d6eaff;
+    --tertiary:#4a90e2;--tertiary-container:#e4f0fc;
+    --blue-bg:#d6eaff;--blue-txt:#1A2E44;--blue-bd:transparent;
+    --green-bg:#ffe8d6;--green-txt:#7a3007;--green-bd:transparent;
+    --amber-bg:#ffd199;--amber-txt:#754a0d;--amber-bd:transparent;
+    --pink-bg:#ffebed;--pink-txt:#8f1d30;--pink-bd:transparent;
+    --red-bg:#fcdcd9;--red-txt:#8a1b12;--red-bd:transparent;
+    --purple-bg:#e8e1f5;--purple-txt:#382263;--purple-bd:transparent;
   }
 }
 
@@ -64,21 +64,37 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 
 /* ── HEADER ─────────────────────────────────────────────────────────────── */
 .site-header{
-  padding:2.5rem 0 1.5rem;
+  padding:4rem 2rem 2rem;
   border-bottom:none;
-  margin-bottom:0;
-  display:flex;align-items:flex-start;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+  display:flex;align-items:flex-end;
   justify-content:space-between;gap:12px;
+  background-image: url('mt_fuji_header.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--r);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(26,46,68,0.1);
 }
-.trip-title{font-family:var(--serif);font-size:28px;font-weight:700;letter-spacing:-.5px;line-height:1.15}
-.trip-meta{font-size:13px;color:var(--muted);margin-top:5px;letter-spacing:.01em}
+.site-header::before{
+  content:'';position:absolute;inset:0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 20%, rgba(26,46,68,0.85) 100%);
+  z-index: 1;
+}
+.site-header > div, .site-header > button { position: relative; z-index: 2; }
+.trip-title{font-family:var(--serif);font-size:32px;font-weight:700;letter-spacing:-.5px;line-height:1.15;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.4)}
+.trip-meta{font-size:13px;color:rgba(255,255,255,0.9);margin-top:5px;letter-spacing:.01em}
 .settings-btn{
-  background:var(--surface-highest);border:none;
+  background:rgba(255,255,255,0.2);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.3);
   border-radius:var(--rs);padding:7px 14px;
-  color:var(--muted);cursor:pointer;font-size:12px;font-family:var(--sans);font-weight:500;
-  transition:all .18s;flex-shrink:0;margin-top:4px;
+  color:#fff;cursor:pointer;font-size:12px;font-family:var(--sans);font-weight:600;
+  transition:all .18s;flex-shrink:0;margin-bottom:4px;
 }
-.settings-btn:hover{background:var(--surface-high);color:var(--ink)}
+.settings-btn:hover{background:rgba(255,255,255,0.35)}
 
 /* ── SETTINGS PANEL ─────────────────────────────────────────────────────── */
 .settings-panel{
@@ -742,11 +758,11 @@ const TRANSPORT_HINTS = {
 
 // ── MAP: city colors & zoom centres ──────────────────────────────────────────
 const CITY_COLORS = {
-  tokyo:  '#1c3d5a',
-  hakone: '#7b8d62',
-  kyoto:  '#d3381c',
-  nara:   '#d1952a',
-  osaka:  '#e08b96',
+  tokyo:  '#1A2E44',
+  hakone: '#4a90e2',
+  kyoto:  '#F26D21',
+  nara:   '#ff9a54',
+  osaka:  '#7D93AA',
 };
 const CITY_ZOOM = {
   all:    [[36.2,  138.5],  6],
