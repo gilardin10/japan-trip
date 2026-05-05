@@ -6,7 +6,7 @@
 <title>Japan · May 2026</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛩️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Serif+JP:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -26,9 +26,9 @@
   --secondary:#7b8d62;--secondary-container:#d1dec0;
   --tertiary:#e08b96;--tertiary-container:#fadbe0;
   /* Radii — card xl, pill for chips/btns */
-  --r:16px;--rm:12px;--rs:9999px;
+  --r:24px;--rm:16px;--rs:9999px;
   /* Fonts */
-  --serif:'Plus Jakarta Sans',system-ui,sans-serif;
+  --serif:'Noto Serif JP','Plus Jakarta Sans',system-ui,sans-serif;
   --sans:'Inter',system-ui,sans-serif;
   /* Semantic colour tokens */
   --blue-bg:#d0e3f2;--blue-txt:#1c3d5a;--blue-bd:transparent;
@@ -115,22 +115,39 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 
 /* ── TABS ───────────────────────────────────────────────────────────────── */
 .tabs{
-  display:flex;gap:0;margin-bottom:2rem;
-  background:transparent;border:none;border-bottom:1px solid var(--border);
-  border-radius:0;padding:0;
-  width:100%;overflow-x:auto;scrollbar-width:none;
+  display:flex;gap:4px;margin-bottom:2rem;
+  background:var(--surface-low);border:none;
+  border-radius:var(--rs);padding:6px;
+  width:fit-content;max-width:100%;overflow-x:auto;scrollbar-width:none;
 }
 .tabs::-webkit-scrollbar{display:none}
 .tab{
-  font-family:var(--sans);font-size:13px;font-weight:500;
-  padding:13px 20px;border-radius:0;border:none;
-  border-bottom:2px solid transparent;margin-bottom:-1px;
+  font-family:var(--sans);font-size:13px;font-weight:600;
+  padding:10px 20px;border-radius:var(--rs);border:none;
   background:transparent;color:var(--muted);
-  cursor:pointer;transition:all .18s;white-space:nowrap;
+  cursor:pointer;transition:all .2s ease;white-space:nowrap;
 }
-.tab:hover{color:var(--ink)}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
-.panel{display:none}.panel.active{display:block}
+.tab:hover{color:var(--ink);background:var(--surface-highest)}
+.tab.active{color:#fff;background:var(--accent);box-shadow:0 4px 12px rgba(211,56,28,.25)}
+@media(max-width:768px){
+  .tabs{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    z-index:999;margin-bottom:0;
+    background:rgba(255,255,255,.8);backdrop-filter:blur(12px);
+    box-shadow:0 8px 32px rgba(47,39,37,.15);
+    border:1px solid rgba(255,255,255,.5);
+    padding:6px;gap:2px;width:calc(100% - 40px);justify-content:space-between;
+  }
+  .tab{padding:12px 10px;font-size:11px;flex:1;text-align:center}
+  /* Padding for bottom nav */
+  body{padding-bottom:100px}
+}
+.panel{display:none;animation:fadeIn 0.3s ease-out forwards;}
+.panel.active{display:block}
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(10px); }
+  to { opacity:1; transform:translateY(0); }
+}
 
 /* ── LOADING / ERROR ────────────────────────────────────────────────────── */
 .loading{text-align:center;padding:4rem 0;color:var(--muted);font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px}
@@ -157,14 +174,15 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
   background:var(--surface);
   border:none;
   border-top:3px solid var(--border);
-  border-radius:var(--rm);
-  padding:14px 13px 12px;
+  border-radius:var(--r);
+  padding:16px 14px;
   cursor:pointer;
-  transition:box-shadow .18s,transform .18s,border-color .18s;
-  display:flex;flex-direction:column;gap:4px;
+  box-shadow:0 4px 12px rgba(0,0,0,.03);
+  transition:all .25s ease;
+  display:flex;flex-direction:column;gap:6px;
   min-height:110px;
 }
-.tdc:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px)}
+.tdc:hover{box-shadow:var(--shadow-hover);transform:translateY(-4px);border-top-color:var(--accent)}
 .tdc-top{display:flex;justify-content:space-between;align-items:flex-start;line-height:1}
 .tdc-num{font-size:22px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-1px;font-family:var(--serif)}
 .tdc-dow{font-size:10px;font-weight:500;color:var(--muted);vertical-align:middle;letter-spacing:.2px}
@@ -312,8 +330,9 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 
 /* ── HOTELS ─────────────────────────────────────────────────────────────── */
 .hotels-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-@media(max-width:700px){.hotels-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:420px){.hotels-grid{grid-template-columns:1fr}}
+@media(max-width:860px){.hotels-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:650px){.hotels-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.hotels-grid{grid-template-columns:1fr}}
 .hotel-card{
   background:var(--surface);border:none;
   border-radius:var(--r);overflow:hidden;
@@ -450,7 +469,10 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 }
 .checklist-item:first-of-type{border-top:none}
 .checklist-item:hover{background:var(--surface-low)}
-.checklist-item.done .checklist-text{text-decoration:line-through;color:var(--hint)}
+.checklist-text{font-size:13px;font-weight:500;line-height:1.4;transition:all 0.3s ease;position:relative}
+.checklist-item.done .checklist-text{color:var(--hint)}
+.checklist-item.done .checklist-text::after{content:'';position:absolute;left:0;top:50%;width:100%;height:1px;background:currentColor;animation:strike 0.3s ease-out forwards}
+@keyframes strike { from{width:0} to{width:100%} }
 .checklist-label{
   display:flex;align-items:center;gap:12px;cursor:pointer;
 }
@@ -464,8 +486,9 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
 }
 
 /* ── BUDGET ─────────────────────────────────────────────────────────────── */
-.budget-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
-@media(max-width:600px){.budget-summary-grid{grid-template-columns:1fr}}
+.budget-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+@media(max-width:700px){.budget-summary-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.budget-summary-grid{grid-template-columns:1fr}}
 .budget-summary-card{
   background:var(--surface);border:none;
   border-radius:var(--r);padding:18px 20px;
@@ -538,12 +561,12 @@ body{font-family:var(--sans);color:var(--ink);background:var(--raised);min-heigh
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('summary',this)">Summary</button>
-    <button class="tab" onclick="switchTab('hourly',this)">Daily</button>
-    <button class="tab" onclick="switchTab('hotels',this)">Hotels</button>
-    <button class="tab" onclick="switchTab('tips',this)">Tips</button>
-    <button class="tab" onclick="switchTab('budget',this)">Budget</button>
-    <button class="tab" onclick="switchTab('checklist',this)">Checklist</button>
+    <button class="tab active" onclick="switchTab('summary',this)">⛩️ Summary</button>
+    <button class="tab" onclick="switchTab('hourly',this)">📅 Daily</button>
+    <button class="tab" onclick="switchTab('hotels',this)">🏨 Hotels</button>
+    <button class="tab" onclick="switchTab('tips',this)">💡 Tips</button>
+    <button class="tab" onclick="switchTab('budget',this)">💴 Budget</button>
+    <button class="tab" onclick="switchTab('checklist',this)">✅ List</button>
   </div>
 
   <div class="panel active" id="panel-summary"><div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
