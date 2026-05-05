@@ -10,50 +10,51 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-/* ── RESET & TOKENS — Serene Navigator (Stitch) ─────────────────────────── */
+/* ── RESET & TOKENS — Japanese Light Theme ─────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   /* Core surfaces */
-  --ink:#1a1c1c;--muted:#3f484e;--hint:#6f787f;
-  --surface:#ffffff;--raised:#faf9f8;
-  --surface-low:#f4f3f2;--surface-high:#e9e8e7;--surface-highest:#e3e2e1;
-  --border:#eeeeed;--border-m:rgba(190,200,208,.4);
+  --ink:#2f2725;--muted:#5c5452;--hint:#8a8381;
+  --surface:#ffffff;--raised:#faf9f5;
+  --surface-low:#f4f0e6;--surface-high:#e8e3d8;--surface-highest:#d9d3c7;
+  --border:#e0dbcf;--border-m:rgba(211,206,193,.4);
   /* Shadows — ambient only, very subtle */
   --shadow-sm:none;--shadow-md:none;
-  --shadow-hover:0 24px 48px rgba(26,28,28,.06);
-  /* Brand palette — Sky / Sage / Sand */
-  --accent:#00658b;--accent-bg:#c4e7ff;--accent-container:#47a9da;
-  --secondary:#536346;--secondary-container:#d6e9c3;
-  --tertiary:#7d562d;--tertiary-container:#ffdcbd;
+  --shadow-hover:0 24px 48px rgba(47,39,37,.08);
+  /* Brand palette — Torii Red / Matcha / Sakura */
+  --accent:#d3381c;--accent-bg:#fad9d5;--accent-container:#e55a40;
+  --secondary:#7b8d62;--secondary-container:#d1dec0;
+  --tertiary:#e08b96;--tertiary-container:#fadbe0;
   /* Radii — card xl, pill for chips/btns */
   --r:16px;--rm:12px;--rs:9999px;
   /* Fonts */
   --serif:'Plus Jakarta Sans',system-ui,sans-serif;
   --sans:'Inter',system-ui,sans-serif;
-  /* Semantic colour tokens — Stitch palette, no borders */
-  --blue-bg:#c4e7ff;--blue-txt:#003b52;--blue-bd:transparent;
-  --green-bg:#d6e9c3;--green-txt:#111f08;--green-bd:transparent;
-  --amber-bg:#ffdcbd;--amber-txt:#4f2f08;--amber-bd:transparent;
-  --pink-bg:#ffdcbd;--pink-txt:#4f2f08;--pink-bd:transparent;
-  --red-bg:#ffdad6;--red-txt:#93000a;--red-bd:transparent;
-  --purple-bg:#d6e9c3;--purple-txt:#3c4b30;--purple-bd:transparent;
+  /* Semantic colour tokens */
+  --blue-bg:#d0e3f2;--blue-txt:#1c3d5a;--blue-bd:transparent;
+  --green-bg:#d1dec0;--green-txt:#2a3b1a;--green-bd:transparent;
+  --amber-bg:#fce3b8;--amber-txt:#5e4313;--amber-bd:transparent;
+  --pink-bg:#fadbe0;--pink-txt:#61202b;--pink-bd:transparent;
+  --red-bg:#fad9d5;--red-txt:#5e130c;--red-bd:transparent;
+  --purple-bg:#e2d9f2;--purple-txt:#382759;--purple-bd:transparent;
 }
+/* Force Light Mode / Override Dark Mode to use Japanese Theme */
 @media(prefers-color-scheme:dark){
   :root{
-    --ink:#e3e2e1;--muted:#bec8d0;--hint:#8a9299;
-    --surface:#1a1c1c;--raised:#1f2120;
-    --surface-low:#242625;--surface-high:#2f3130;--surface-highest:#353736;
-    --border:#2f3130;--border-m:rgba(142,155,162,.25);
-    --shadow-hover:0 24px 48px rgba(0,0,0,.35);
-    --accent:#7dd0ff;--accent-bg:#001e2c;--accent-container:#004c69;
-    --secondary:#bacca8;--secondary-container:#3c4b30;
-    --tertiary:#f0bd8b;--tertiary-container:#623f18;
-    --blue-bg:#001e2c;--blue-txt:#7dd0ff;--blue-bd:transparent;
-    --green-bg:#111f08;--green-txt:#bacca8;--green-bd:transparent;
-    --amber-bg:#2c1600;--amber-txt:#f0bd8b;--amber-bd:transparent;
-    --pink-bg:#2c1600;--pink-txt:#f0bd8b;--pink-bd:transparent;
-    --red-bg:#3b0009;--red-txt:#ffdad6;--red-bd:transparent;
-    --purple-bg:#111f08;--purple-txt:#bacca8;--purple-bd:transparent;
+    --ink:#2f2725;--muted:#5c5452;--hint:#8a8381;
+    --surface:#ffffff;--raised:#faf9f5;
+    --surface-low:#f4f0e6;--surface-high:#e8e3d8;--surface-highest:#d9d3c7;
+    --border:#e0dbcf;--border-m:rgba(211,206,193,.4);
+    --shadow-hover:0 24px 48px rgba(47,39,37,.08);
+    --accent:#d3381c;--accent-bg:#fad9d5;--accent-container:#e55a40;
+    --secondary:#7b8d62;--secondary-container:#d1dec0;
+    --tertiary:#e08b96;--tertiary-container:#fadbe0;
+    --blue-bg:#d0e3f2;--blue-txt:#1c3d5a;--blue-bd:transparent;
+    --green-bg:#d1dec0;--green-txt:#2a3b1a;--green-bd:transparent;
+    --amber-bg:#fce3b8;--amber-txt:#5e4313;--amber-bd:transparent;
+    --pink-bg:#fadbe0;--pink-txt:#61202b;--pink-bd:transparent;
+    --red-bg:#fad9d5;--red-txt:#5e130c;--red-bd:transparent;
+    --purple-bg:#e2d9f2;--purple-txt:#382759;--purple-bd:transparent;
   }
 }
 
@@ -718,11 +719,11 @@ const TRANSPORT_HINTS = {
 
 // ── MAP: city colors & zoom centres ──────────────────────────────────────────
 const CITY_COLORS = {
-  tokyo:  '#3b82f6',
-  hakone: '#10b981',
-  kyoto:  '#ef4444',
-  nara:   '#f59e0b',
-  osaka:  '#8b5cf6',
+  tokyo:  '#1c3d5a',
+  hakone: '#7b8d62',
+  kyoto:  '#d3381c',
+  nara:   '#d1952a',
+  osaka:  '#e08b96',
 };
 const CITY_ZOOM = {
   all:    [[36.2,  138.5],  6],
